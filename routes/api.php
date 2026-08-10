@@ -12,4 +12,5 @@ Route::get('/user', function (Request $request) {
 Route::get('/cities', [CityController::class, 'index']);
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'apilogin']);
+Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
 Route::post('/email/verification-notification', [AuthController::class, 'resendVerificationEmail']);

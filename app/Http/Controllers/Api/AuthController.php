@@ -110,6 +110,25 @@ class AuthController extends Controller
         ], 201);
     }
 
+    public function logout(Request $request)
+    {
+        $user = $request->user();
+
+        if (! $user || ! $request->user()->currentAccessToken()) {
+            return response()->json([
+                'icon' => 'error',
+                'title' => 'Unable to logout. No active token found.',
+            ], 400);
+        }
+
+        $request->user()->currentAccessToken()->delete();
+
+        return response()->json([
+            'icon' => 'success',
+            'title' => 'Logout successful.',
+        ], 200);
+    }
+
     public function resendVerificationEmail(Request $request)
     {
         $validator = Validator::make($request->all(), [
