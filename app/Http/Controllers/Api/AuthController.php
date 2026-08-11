@@ -5,7 +5,11 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\User;
+use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Password;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Str;
 use Illuminate\Support\Facades\Validator;
 
 class AuthController extends Controller
@@ -160,5 +164,202 @@ class AuthController extends Controller
             'icon' => 'success',
             'title' => 'Verification email sent.',
         ], 200);
+    }
+
+    public function profile(Request $request)
+    {
+        $user = $request->user();
+
+        return response()->json([
+            'icon' => 'success',
+            'title' => 'Profile loaded',
+            'data' => [
+                'id' => $user->id,
+                'name' => $user->name,
+                'phone' => $user->phone,
+                'avatar' => $user->avatar ? Storage::url($user->avatar) : null,
+                'city_id' => $user->city_id,
+                'city' => $user->city ? [
+                    'id' => $user->city->id,
+                    'name' => $user->city->name,
+                ] : null,
+            ],
+        ], 200);
+    }
+
+    public function updateProfile(Request $request)
+    {
+        $user = $request->user();
+
+        $validator = Validator::make($request->all(), [
+            'name' => 'nullable|string|max:255',
+            'phone' => 'nullable|string|max:45',
+            'city_id' => 'nullable|exists:cities,id',
+            'avatar' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:4096',
+        ], [
+            'city_id.exists' => 'المدينة غير صالحة. اختر المدينة من القائمة.',
+            'avatar.image' => 'الملف يجب أن يكون صورة.',
+            'avatar.mimes' => 'نوع الصورة غير مدعوم. استخدم jpeg أو png أو jpg أو gif أو svg.',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'icon' => 'error',
+                'title' => $validator->errors()->first(),
+                'errors' => $validator->errors(),
+            ], 422);
+        }
+
+        $data = $validator->validated();
+
+        if ($request->hasFile('avatar')) {
+            if ($user->avatar && Storage::disk('public')->exists($user->avatar)) {
+                Storage::disk('public')->delete($user->avatar);
+            }
+
+            $data['avatar'] = $request->file('avatar')->store('avatars', 'public');
+        }
+
+        $user->update($data);
+
+        return response()->json([
+            'icon' => 'success',
+            'title' => 'Profile updated successfully.',
+            'data' => [
+                'id' => $user->id,
+                'name' => $user->name,
+                'phone' => $user->phone,
+                'avatar' => $user->avatar ? Storage::url($user->avatar) : null,
+                'city_id' => $user->city_id,
+                'city' => $user->city ? [
+                    'id' => $user->city->id,
+                    'name' => $user->city->name,
+                ] : null,
+            ],
+        ], 200);
+    }
+
+    public function deleteAccount(Request $request)
+    {
+        $user = $request->user();
+
+        if ($request->user()->currentAccessToken()) {
+            $request->user()->currentAccessToken()->delete();
+        }
+
+        $user->delete();
+
+        return response()->json([
+            'icon' => 'success',
+            'title' => 'Account deleted successfully.',
+        ], 200);
+    }
+
+    public function changePassword(Request $request)
+    {
+        $user = $request->user();
+
+        $validator = Validator::make($request->all(), [
+            'current_password' => 'required|string',
+            'new_password' => 'required|string|confirmed|min:8',
+        ], [
+            'new_password.confirmed' => 'تأكيد كلمة المرور الجديدة لا يطابق.',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'icon' => 'error',
+                'title' => $validator->errors()->first(),
+                'errors' => $validator->errors(),
+            ], 422);
+        }
+
+        if (! Hash::check($request->current_password, $user->password)) {
+            return response()->json([
+                'icon' => 'error',
+                'title' => 'Current password is incorrect.',
+            ], 403);
+        }
+
+        $user->password = Hash::make($request->new_password);
+        $user->save();
+
+        return response()->json([
+            'icon' => 'success',
+            'title' => 'Password changed successfully.',
+        ], 200);
+    }
+
+    public function forgotPassword(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'email' => 'required|email|exists:users,email',
+        ], [
+            'email.exists' => 'هذا البريد غير مسجل.',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'icon' => 'error',
+                'title' => $validator->errors()->first(),
+                'errors' => $validator->errors(),
+            ], 422);
+        }
+
+        $status = Password::sendResetLink($request->only('email'));
+
+        if ($status === Password::RESET_LINK_SENT) {
+            return response()->json([
+                'icon' => 'success',
+                'title' => 'Password reset link sent.',
+            ], 200);
+        }
+
+        return response()->json([
+            'icon' => 'error',
+            'title' => 'Unable to send password reset link.',
+        ], 500);
+    }
+
+    public function resetPassword(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'token' => 'required|string',
+            'email' => 'required|email|exists:users,email',
+            'password' => 'required|string|confirmed|min:8',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'icon' => 'error',
+                'title' => $validator->errors()->first(),
+                'errors' => $validator->errors(),
+            ], 422);
+        }
+
+        $status = Password::reset(
+            $request->only('email', 'password', 'password_confirmation', 'token'),
+            function ($user, $password) {
+                $user->forceFill([
+                    'password' => Hash::make($password),
+                    'remember_token' => Str::random(60),
+                ])->save();
+
+                event(new PasswordReset($user));
+            }
+        );
+
+        if ($status === Password::PASSWORD_RESET) {
+            return response()->json([
+                'icon' => 'success',
+                'title' => 'Password has been reset successfully.',
+            ], 200);
+        }
+
+        return response()->json([
+            'icon' => 'error',
+            'title' => 'Unable to reset password.',
+            'errors' => ['token' => [trans($status)]],
+        ], 422);
     }
 }
