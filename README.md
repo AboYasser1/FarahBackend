@@ -1,59 +1,443 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Farah API Project
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+åĞÇ Çáãáİ íÔÑÍ ÇáãÔÑæÚ ÎØæÉ ÈÎØæÉ ÈÍíË íßæä ãÑÌÚÇ ááİåã æÇáÊØæíÑ.
 
-## About Laravel
+## 1) ãŞÏãÉ ÇáãÔÑæÚ
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+åĞÇ ÇáãÔÑæÚ ãÈäí Úáì Laravel æíåÏİ Åáì ÈäÇÁ API ãäÇÓÈ áæÇÌåÉ Flutter. Êã ÊÕãíãå ÍÓÈ İßÑÉ ÇáÊØÈíŞ ÇáÊí ÊÙåÑ İí ÇáÕæÑ ÎÇÕÉ İí ÇáÃŞÓÇã ÇáÊÇáíÉ:
+- ÇáÕİÍÉ ÇáÑÆíÓíÉ
+- ÇáÊÕäíİÇÊ
+- ÇáÎÏãÇÊ æÇáãäÊÌÇÊ
+- ÊŞííãÇÊ ÇáÎÏãÇÊ
+- ÇáãİÖáÉ
+- ÇáÍÌæÒÇÊ
+- ÅÚÏÇÏÇÊ ÇáÅÔÚÇÑÇÊ
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+---
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## 2) åíßá ÇáãÔÑæÚ
 
-## Learning Laravel
+### Core folders
+- `app/Models` ? ÇáÌÏÇæá æModel classes
+- `app/Http/Controllers/Api` ? Controllers ÇáÎÇÕÉ ÈÜ API
+- `database/migrations` ? ÇáÌÏÇæá (Schema)
+- `database/factories` ? Factory áÅäÔÇÁ ÈíÇäÇÊ ÊÌÑíÈíÉ
+- `database/seeders` ? Seeder áãáÁ ÇáÈíÇäÇÊ
+- `routes/api.php` ? ÌãíÚ endpoints ÇáÎÇÕÉ ÈÜ API
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+---
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+## 3) ÇáÌÏÇæá ÇáÃÓÇÓíÉ
 
-## Laravel Sponsors
+### 3.1 users
+ÇáÌÏæá ÇáÃÓÇÓí ááãÓÊÎÏãíä.
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+#### ÇáÃÚãÏÉ ÇáÃÓÇÓíÉ:
+- id
+- name
+- email
+- password
+- phone
+- user_type
+- status
+- avatar
+- bio
+- cover_image
+- last_login_at
+- is_online
+- city_id
+- email_verified_at
+- remember_token
+- created_at
+- updated_at
+- deleted_at
 
-### Premium Partners
+#### áãÇĞÇ Êã ÅäÔÇÄå
+áÃäå íÍÊæí Úáì ÈíÇäÇÊ ÇáãÓÊÎÏã ÇáÃÓÇÓíÉ ãËá ÇáÇÓã ÇáÅíãíá ßáãÉ ÇáãÑæÑ ÇáÍÇáÉ ÇáãÏíäÉ æÇáÕæÑÉ ÇáÔÎÕíÉ.
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+#### Model:
+- `app/Models/User.php`
 
-## Contributing
+---
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+### 3.2 cities
+ÇáÌÏæá ÇáĞí íÍİÙ ÇáãÏä.
 
-## Code of Conduct
+#### ÇáÃÚãÏÉ:
+- id
+- name
+- created_at
+- updated_at
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+#### áãÇĞÇ Êã ÅäÔÇÄå
+áÃä ÇáÊØÈíŞ íÚÊãÏ Úáì ÇÎÊíÇÑ ÇáãÏíäÉ İí Çáãáİ ÇáÔÎÕí æÇáÎÏãÇÊ.
 
-## Security Vulnerabilities
+#### Model:
+- `app/Models/City.php`
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+---
 
-## License
+### 3.3 locations
+åĞÇ ÇáÌÏæá íÍİÙ ÃãÇßä ÇáãÓÊÎÏã Ãæ ãÒæÏ ÇáÎÏãÉ.
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+#### ÇáÃÚãÏÉ:
+- id
+- user_id
+- label
+- address
+- city_id
+- latitude
+- longitude
+- created_at
+- updated_at
+
+#### áãÇĞÇ Êã ÅäÔÇÄå
+áÃäå ãåã ÅĞÇ ßÇä ÇáÊØÈíŞ íÍÊÇÌ Åáì ÍİÙ ÃßËÑ ãä ÚäæÇä Ãæ ãæŞÚ ááãÓÊÎÏã.
+
+#### Model:
+- `app/Models/Location.php`
+
+---
+
+### 3.4 provider_profiles
+åĞÇ ÇáÌÏæá íãËá ÈÑæİÇíá ÇáãÒæÏ.
+
+#### ÇáÃÚãÏÉ:
+- id
+- user_id
+- city_id
+- business_name
+- category_id
+- phone
+- bio
+- description
+- cover_image
+- address
+- latitude
+- longitude
+- status
+- is_featured
+- rating
+- working_hours
+- timestamps
+
+#### áãÇĞÇ Êã ÅäÔÇÄå
+áÃä ÇáÊØÈíŞ íÍÊæí Úáì ãÒæÏíä ÎÏãÇÊ æßá ãÒæÏ íÍÊÇÌ ÇÓã Úãá ÍÇáÉ ÊŞííã ÕæÑÉ ÛáÇİ æãÚáæãÇÊ ÃÓÇÓíÉ.
+
+#### Model:
+- `app/Models/ProviderProfile.php`
+
+---
+
+### 3.5 categories
+åĞÇ ÇáÌÏæá íÍÊæí ÇáÊÕäíİÇÊ Ãæ ÇáİÆÇÊ ÇáÑÆíÓíÉ ááÊØÈíŞ.
+
+#### ÇáÃÚãÏÉ:
+- id
+- name
+- slug
+- image
+- parent_id
+- status
+- created_at
+- updated_at
+
+#### áãÇĞÇ Êã ÅäÔÇÄå
+áÃä ÇáÔÇÔÉ ÇáÑÆíÓíÉ ÊÍÊæí Úáì ÊÕäíİÇÊ.
+
+#### Model:
+- `app/Models/Category.php`
+
+---
+
+### 3.6 services
+åĞÇ åæ Ãåã ÌÏæá İí ÇáÊØÈíŞ ÈÚÏ users.
+
+#### ÇáÃÚãÏÉ:
+- id
+- provider_id
+- category_id
+- city_id
+- title
+- description
+- price
+- currency
+- image
+- rating_avg
+- reviews_count
+- is_featured
+- is_available
+- status
+- created_at
+- updated_at
+
+#### áãÇĞÇ Êã ÅäÔÇÄå
+áÃäå íãËá ÇáÎÏãÉ Ãæ ÇáãäÊÌ ÇáĞí íÚÑÖ İí ÇáÕİÍÉ ÇáÑÆíÓíÉ.
+
+#### Model:
+- `app/Models/Service.php`
+
+---
+
+### 3.7 service_images
+åĞÇ ÇáÌÏæá íÍİÙ ÇáÕæÑ ÇáãÊÚÏÏÉ áßá ÎÏãÉ.
+
+#### ÇáÃÚãÏÉ:
+- id
+- service_id
+- image_path
+- is_cover
+- sort_order
+- created_at
+- updated_at
+
+#### áãÇĞÇ Êã ÅäÔÇÄå
+áÃä ßá ÎÏãÉ ŞÏ íßæä áåÇ ÃßËÑ ãä ÕæÑÉ.
+
+#### Model:
+- `app/Models/ServiceImage.php`
+
+---
+
+### 3.8 reviews
+åĞÇ ÇáÌÏæá íÍİÙ ÊŞííãÇÊ ÇáãÓÊÎÏãíä Úáì ÇáÎÏãÇÊ.
+
+#### ÇáÃÚãÏÉ:
+- id
+- user_id
+- service_id
+- rating
+- comment
+- created_at
+- updated_at
+
+#### áãÇĞÇ Êã ÅäÔÇÄå
+áÃä ÇáÊØÈíŞ íÍÊæí Úáì äÌæã æÊŞííãÇÊ İí ßá ÎÏãÉ.
+
+#### Model:
+- `app/Models/Review.php`
+
+---
+
+### 3.9 favorites
+åĞÇ ÇáÌÏæá íÍİÙ ÇáÎÏãÇÊ ÇáãİÖáÉ ÚäÏ ÇáãÓÊÎÏã.
+
+#### ÇáÃÚãÏÉ:
+- id
+- user_id
+- service_id
+- created_at
+- updated_at
+
+#### áãÇĞÇ Êã ÅäÔÇÄå
+áÃä İí ÇáÔÇÔÉ íæÌÏ ÒÑ ŞáÈ Ãæ ãİÖáÉ.
+
+#### Model:
+- `app/Models/Favorite.php`
+
+---
+
+### 3.10 bookings
+åĞÇ ÇáÌÏæá íÍİÙ ÇáÍÌæÒÇÊ.
+
+#### ÇáÃÚãÏÉ:
+- id
+- user_id
+- service_id
+- provider_id
+- booking_date
+- booking_time
+- total_price
+- status
+- notes
+- created_at
+- updated_at
+
+#### áãÇĞÇ Êã ÅäÔÇÄå
+áÃäå ãäØŞ ÇáÊØÈíŞ íÊÖãä ÍÌÒ ÎÏãÇÊ Ãæ ÊÌåíÒÇÊ.
+
+#### Model:
+- `app/Models/Booking.php`
+
+---
+
+### 3.11 notification_settings
+åĞÇ ÇáÌÏæá íÍİÙ ÅÚÏÇÏÇÊ ÇáÅÔÚÇÑÇÊ ááãÓÊÎÏã.
+
+#### ÇáÃÚãÏÉ:
+- id
+- user_id
+- new_orders
+- offers
+- promotions
+- reminders
+- created_at
+- updated_at
+
+#### áãÇĞÇ Êã ÅäÔÇÄå
+áÃä İí ÇáÊÕãíã íæÌÏ ŞÓã ÇáÅÔÚÇÑÇÊ æãæÇÑÏ ãä äæÚ Toggle.
+
+#### Model:
+- `app/Models/NotificationSetting.php`
+
+---
+
+## 4) Models æãÇĞÇ íİÚá ßá æÇÍÏ
+
+### `User`
+íãËá ÇáãÓÊÎÏã ÇáÃÓÇÓí.
+
+### `ProviderProfile`
+íãËá ãÒæÏ ÇáÎÏãÉ.
+
+### `Category`
+íãËá ÇáİÆÉ Ãæ ÇáÊÕäíİ.
+
+### `Service`
+íãËá ÇáÎÏãÉ ÇáÍÇáíÉ ÇáãÚÑæÖÉ.
+
+### `ServiceImage`
+íãËá ÕæÑ ÇáÎÏãÉ.
+
+### `Review`
+íãËá ÊŞííã ÇáãÓÊÎÏã ááÎÏãÉ.
+
+### `Favorite`
+íãËá ÇáÎÏãÉ ÇáãİÖáÉ.
+
+### `Booking`
+íãËá ÇáÍÌÒ ÇáĞí Êã Úãáå.
+
+### `NotificationSetting`
+íãËá ÊİÖíáÇÊ ÇáÅÔÚÇÑÇÊ ááÜ user.
+
+---
+
+## 5) ãÇ åí ÇáÜ Controllers ÇáÊí Êã ÅäÔÇÄåÇ
+
+### `HomeController`
+æÙíİÊå:
+- ÊÌåíÒ ÇáÕİÍÉ ÇáÑÆíÓíÉ
+- ÌãÚ ÃÈÑÒ ÇáãÒæÏíä
+- ÌãÚ ÇáÊÕäíİÇÊ
+- ÌãÚ ÇáÎÏãÇÊ ÇáããíÒÉ
+
+#### ÇáãÓÇÑ:
+- `GET /api/home`
+
+---
+
+### `CategoryController`
+æÙíİÊå:
+- ÌáÈ ßá ÇáÊÕäíİÇÊ
+- ÊäÙíãåÇ ÏÇÎá JSON
+
+#### ÇáãÓÇÑ:
+- `GET /api/categories`
+
+---
+
+### `ServiceController`
+æÙíİÊå:
+- ÌáÈ ßá ÇáÎÏãÇÊ
+- ÇáÈÍË
+- İáÊÑÉ ÍÓÈ category_id
+- ÚÑÖ ÊİÇÕíá ÎÏãÉ ãÚíäÉ
+
+#### ÇáãÓÇÑÇÊ:
+- `GET /api/services`
+- `GET /api/services/{id}`
+
+---
+
+## 6) áãÇĞÇ Êã ÅäÔÇÁ Controllers
+
+áÃä Laravel íÍÊÇÌ ØÈŞÉ æÓíØÉ Èíä:
+- ÇáÜ Route
+- ÇáÜ Model
+- æÇáÜ JSON Response
+
+Ãí Ãä ÇáÜ Controller íÌíÈ Úáì ÇáØáÈ æíŞÑÃ ãä ŞÇÚÏÉ ÇáÈíÇäÇÊ Ëã íÚíÏ ÇáäÊíÌÉ Åáì Flutter.
+
+---
+
+## 7) ãÇ åí Factory æ Seeder
+
+### Factory
+åæ ãáİ íÓÇÚÏ Úáì ÅäÔÇÁ ÈíÇäÇÊ ÊÌÑíÈíÉ ÈÔßá ÓÑíÚ.
+
+ÃãËáÉ:
+- `CategoryFactory`
+- `ServiceFactory`
+- `ReviewFactory`
+- `BookingFactory`
+- `NotificationSettingFactory`
+
+### Seeder
+åæ ãáİ íŞæã ÈãáÁ ÌÏæá ãÚíä ÈÈíÇäÇÊ ÊÌÑíÈíÉ Ãæ ÃÓÇÓíÉ.
+
+ÃãËáÉ:
+- `CategorySeeder`
+- `ServiceSeeder`
+- `ReviewSeeder`
+- `FavoriteSeeder`
+- `BookingSeeder`
+- `NotificationSettingSeeder`
+
+### DatabaseSeeder
+åæ Çáãáİ ÇáÑÆíÓí ÇáĞí íÑÈØ ßá ÇáÜ Seeders ãÚÇ.
+
+---
+
+## 8) áãÇĞÇ Factory æ Seeder ãåãÇä
+
+áÃääÇ ÈÍÇÌÉ Åáì:
+- ÇÎÊÈÇÑ ÇáÊØÈíŞ
+- ãáÁ ŞÇÚÏÉ ÇáÈíÇäÇÊ ááÚÑÖ İí ÇáÊØÈíŞ
+- ÇÎÊÈÇÑ ÇáÜ API ÈÔßá ÓÑíÚ
+- ÅÚÏÇÏ ÈíÆÉ ÊØæíÑ ßÇãáÉ
+
+---
+
+## 9) Routes ÇáÃÓÇÓíÉ İí ÇáãÔÑæÚ
+
+ÊãÊ ÅÖÇİÉ åĞå ÇáÑæÇÈØ İí `routes/api.php`:
+
+- `GET /api/home`
+- `GET /api/categories`
+- `GET /api/services`
+- `GET /api/services/{id}`
+
+åĞÇ íÌÚá Flutter ŞÇÏÑÇ Úáì ÌáÈ ÇáÈíÇäÇÊ ãä Laravel ÈÔßá ãäÙã.
+
+---
+
+## 10) ÇáÎáÇÕÉ
+
+åĞÇ ÇáãÔÑæÚ ÇáÂä íÊßæä ãä:
+- Users + Auth
+- Cities
+- Locations
+- Provider Profiles
+- Categories
+- Services
+- Reviews
+- Favorites
+- Bookings
+- Notification Settings
+- API controllers
+- Factory + Seeder
+
+æåæ ÌÇåÒ ßÜ foundation ßÈíÑ ÌÏÇ áÈäÇÁ ÇáÊØÈíŞ ÈÇáßÇãá.
+
+---
+
+## 11) ÇáÎØæÉ ÇáÊÇáíÉ
+íãßä ÇáÂä ãÊÇÈÚÉ ÈäÇÁ API ááÜ:
+- Favorites
+- Bookings
+- Notification settings
+- Reviews
+- Auth/Profile
+
+æåĞÇ ÓíßÊãá ÇáÊØÈíŞ ÈÔßá ÇÍÊÑÇİí æãäÇÓÈ ÌÏÇ áÜ Flutter.

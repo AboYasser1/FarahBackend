@@ -13,10 +13,23 @@ return new class extends Migration
     {
         Schema::create('provider_profiles', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('user_id')->unique()->constrained('users')->onDelete('cascade');
+            $table->foreignId('city_id')->nullable()->constrained('cities')->nullOnDelete();
+
             $table->string('business_name', 150);
-            $table->string('category', 100);
+            $table->foreignId('category_id')->nullable()->constrained('categories')->nullOnDelete();
+            $table->string('phone', 45)->nullable();
+
             $table->text('bio')->nullable();
-            $table->foreignId('users_id')->constrained()->onDelete('cascade')->cascadeOnDelete();     
+            $table->text('description')->nullable(); 
+
+            $table->string('cover_image', 2048)->nullable();
+
+            $table->enum('status', ['pending', 'approved', 'rejected', 'suspended'])->default('pending');
+            $table->boolean('is_featured')->default(false);
+            $table->decimal('rating', 3, 2)->default(0.00);
+            $table->json('working_hours')->nullable();
+
             $table->timestamps();
         });
     }
