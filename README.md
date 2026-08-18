@@ -184,7 +184,6 @@
 - id
 - service_id
 - image_path
-- is_cover
 - sort_order
 - created_at
 - updated_at
