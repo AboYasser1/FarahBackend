@@ -18,3 +18,6 @@ Route::middleware('auth')->group(function () {
 });
 
 require __DIR__.'/auth.php';
+Route::get('/check-db', function () {
+    return response()->json(\Illuminate\Support\Facades\Schema::getTableListing());
+});
