@@ -23,8 +23,7 @@ class CategoryFactory extends Factory
         return [
             'name' => $name,
             'slug' => strtolower(str_replace(' ', '-', $name)),
-            'image' => 'categories/' . $this->faker->image('public/storage', 640, 480, null, false),
-            'parent_id' => null,
+            'image' => 'categories/default.jpg',
             'status' => 'active',
         ];
     }

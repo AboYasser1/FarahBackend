@@ -13,7 +13,7 @@ class NotificationSettingFactory extends Factory
     public function definition(): array
     {
         return [
-            'user_id' => User::query()->inRandomOrder()->first()?->id ?? User::factory()->create()->id,
+            'user_id' => User::factory(),
             'new_orders' => true,
             'offers' => true,
             'promotions' => false,

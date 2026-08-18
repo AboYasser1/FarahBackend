@@ -25,7 +25,7 @@ class ServiceFactory extends Factory
             'description' => $this->faker->paragraph(),
             'price' => $this->faker->numberBetween(50, 500),
             'currency' => 'SAR',
-            'image' => 'services/' . $this->faker->image('public/storage', 640, 480, null, false),
+            'image' => 'services/default.jpg',
             'rating_avg' => $this->faker->randomFloat(2, 3, 5),
             'reviews_count' => $this->faker->numberBetween(0, 50),
             'is_featured' => $this->faker->boolean(30),
