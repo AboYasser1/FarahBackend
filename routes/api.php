@@ -8,6 +8,7 @@ use App\Http\Controllers\Api\CityController;
 use App\Http\Controllers\Api\HomeController;
 use App\Http\Controllers\Api\LocationController;
 use App\Http\Controllers\Api\ServiceController;
+use App\Http\Controllers\UserController;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -36,4 +37,4 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::patch('/password', [AuthController::class, 'changePassword']);
 });
 
-
+Route::get('/users', [UserController::class, 'index']);

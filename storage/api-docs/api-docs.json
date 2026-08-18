@@ -1,0 +1,52 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Farah API Documentation",
+        "description": "توثيق واجهات برمجة التطبيقات لمنصة فرح",
+        "version": "1.0.0"
+    },
+    "paths": {
+        "/api": {
+            "servers": [
+                {
+                    "url": "http://127.0.0.1:8000/api",
+                    "description": "السيرفر المحلي"
+                }
+            ]
+        },
+        "/users": {
+            "get": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "جلب قائمة المستخدمين",
+                "operationId": "7e2f5799553ec93c9c43e2a58490d447",
+                "responses": {
+                    "200": {
+                        "description": "تمت العملية بنجاح"
+                    },
+                    "401": {
+                        "description": "غير مصرح"
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "securitySchemes": {
+            "bearerAuth": {
+                "type": "http",
+                "name": "Authorization",
+                "in": "header",
+                "bearerFormat": "JWT",
+                "scheme": "bearer"
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "Users",
+            "description": "Users"
+        }
+    ]
+}
