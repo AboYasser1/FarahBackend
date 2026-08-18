@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('email', 255);
             $table->string('token', 255);
-            $table->foreignId('users_id')->constrained()->onDelete('cascade')->cascadeOnDelete();
+            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->timestamps();
         });
     }

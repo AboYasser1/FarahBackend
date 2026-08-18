@@ -21,8 +21,7 @@ return new class extends Migration
             $table->string('phone', 45)->nullable();
 
             $table->text('bio')->nullable();
-            $table->text('description')->nullable(); 
-
+            $table->text('description')->nullable();
             $table->string('cover_image', 2048)->nullable();
 
             $table->enum('status', ['pending', 'approved', 'rejected', 'suspended'])->default('pending');

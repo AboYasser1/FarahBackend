@@ -63,12 +63,12 @@ class User extends Authenticatable implements MustVerifyEmail
 
     public function providerProfile()
     {
-        return $this->hasOne(ProviderProfile::class, 'users_id');
+        return $this->hasOne(ProviderProfile::class, 'user_id');
     }
 
     public function passwordResets()
     {
-        return $this->hasMany(PasswordReset::class, 'users_id');
+        return $this->hasMany(PasswordReset::class, 'user_id');
     }
 
     public function locations()

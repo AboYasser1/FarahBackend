@@ -17,11 +17,11 @@ class PasswordReset extends Model
     protected $fillable = [
         'email',
         'token',
-        'users_id',
+        'user_id',
     ];
 
     public function user()
     {
-        return $this->belongsTo(User::class, 'users_id');
+        return $this->belongsTo(User::class, 'user_id');
     }
 }

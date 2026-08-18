@@ -10,19 +10,35 @@ class ProviderProfile extends Model
     /** @use HasFactory<\Database\Factories\ProviderProfileFactory> */
     use HasFactory;
 
-
     protected $table = 'provider_profiles';
 
     protected $fillable = [
+        'user_id',
+        'city_id',
         'business_name',
-        'category',
+        'category_id',
+        'phone',
         'bio',
-        'users_id',
+        'description',
+        'cover_image',
+        'status',
+        'is_featured',
+        'rating',
+        'working_hours',
     ];
 
-    
     public function user()
     {
-        return $this->belongsTo(User::class, 'users_id');
+        return $this->belongsTo(User::class, 'user_id');
+    }
+
+    public function city()
+    {
+        return $this->belongsTo(City::class, 'city_id');
+    }
+
+    public function category()
+    {
+        return $this->belongsTo(Category::class, 'category_id');
     }
 }
