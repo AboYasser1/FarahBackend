@@ -9,6 +9,10 @@
         "/api": {
             "servers": [
                 {
+                    "url": "https://farah-backend-1.onrender.com/api",
+                    "description": "سيرفر الإنتاج (Render)"
+                },
+                {
                     "url": "http://127.0.0.1:8000/api",
                     "description": "السيرفر المحلي"
                 }

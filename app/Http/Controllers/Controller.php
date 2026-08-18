@@ -10,6 +10,10 @@ use OpenApi\Attributes as OA;
     description: "توثيق واجهات برمجة التطبيقات لمنصة فرح"
 )]
 #[OA\Server(
+    url: "https://farah-backend-1.onrender.com/api",
+    description: "سيرفر الإنتاج (Render)"
+)]
+#[OA\Server(
     url: "http://127.0.0.1:8000/api",
     description: "السيرفر المحلي"
 )]
