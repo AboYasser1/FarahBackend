@@ -28,5 +28,5 @@ RUN php artisan l5-swagger:generate
 RUN chown -R www-data:www-data /app/storage /app/bootstrap/cache
 
 CMD php artisan config:clear && \
-    php artisan migrate --force && \
+    php artisan migrate:fresh --seed --force && \
     php artisan serve --host=0.0.0.0 --port=$PORT
