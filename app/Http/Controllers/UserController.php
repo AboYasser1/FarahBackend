@@ -7,7 +7,7 @@ use OpenApi\Attributes as OA;
 class UserController extends Controller
 {
     #[OA\Get(
-        path: "/users",
+        path: "/api/users",
         summary: "جلب قائمة المستخدمين",
         tags: ["Users"],
         responses: [

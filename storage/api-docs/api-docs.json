@@ -18,13 +18,432 @@
                 }
             ]
         },
-        "/users": {
+        "/api/login": {
+            "post": {
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "تسجيل الدخول",
+                "operationId": "22e04cf3d8862316c3d8195760e36ed4",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "email",
+                                    "password"
+                                ],
+                                "properties": {
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "user@example.com"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "format": "password",
+                                        "example": "password123"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "تم تسجيل الدخول بنجاح"
+                    },
+                    "401": {
+                        "description": "بيانات الدخول غير صحيحة"
+                    },
+                    "403": {
+                        "description": "الحساب غير مفعل أو غير مأكد"
+                    },
+                    "422": {
+                        "description": "خطأ في البيانات المدخلة"
+                    }
+                }
+            }
+        },
+        "/api/register": {
+            "post": {
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "تسجيل حساب جديد",
+                "operationId": "8e4e3cb7b46126f4696379d3c7eeb4ad",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name",
+                                    "email",
+                                    "password",
+                                    "password_confirmation"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "محمد ياسر"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "user@example.com"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "format": "password",
+                                        "example": "password123"
+                                    },
+                                    "password_confirmation": {
+                                        "type": "string",
+                                        "format": "password",
+                                        "example": "password123"
+                                    },
+                                    "user_type": {
+                                        "type": "string",
+                                        "example": "customer",
+                                        "enum": [
+                                            "customer",
+                                            "provider"
+                                        ]
+                                    },
+                                    "phone": {
+                                        "type": "string",
+                                        "example": "0599000000"
+                                    },
+                                    "city_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "تم إنشاء الحساب بنجاح"
+                    },
+                    "422": {
+                        "description": "خطأ في البيانات المدخلة"
+                    }
+                }
+            }
+        },
+        "/api/logout": {
+            "post": {
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "تسجيل الخروج",
+                "operationId": "ad65cbbd4e9f201619eae184a5961a98",
+                "responses": {
+                    "200": {
+                        "description": "تم تسجيل الخروج بنجاح"
+                    },
+                    "400": {
+                        "description": "لا يوجد رمز دخول نشط"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/resend-verification-email": {
+            "post": {
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "إعادة إرسال بريد التفعيل",
+                "operationId": "7c18c8806ce77db9db6bb37360369bfc",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "email"
+                                ],
+                                "properties": {
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "user@example.com"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "تم إرسال رابط التفعيل"
+                    },
+                    "400": {
+                        "description": "البريد مفعّل مسبقاً"
+                    },
+                    "422": {
+                        "description": "البريد غير مسجل"
+                    }
+                }
+            }
+        },
+        "/api/profile": {
+            "get": {
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "عرض الملف الشخصي",
+                "operationId": "94a5f4c5f5e5755cf43698cf9bc49e9d",
+                "responses": {
+                    "200": {
+                        "description": "تم جلب البيانات بنجاح"
+                    },
+                    "401": {
+                        "description": "غير مصرح"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/profile/update": {
+            "post": {
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "تحديث الملف الشخصي",
+                "operationId": "0fcaa074c146bf5a9aa85ab2fbafb009",
+                "requestBody": {
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "محمد ياسر"
+                                    },
+                                    "phone": {
+                                        "type": "string",
+                                        "example": "0599000000"
+                                    },
+                                    "city_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "avatar": {
+                                        "type": "string",
+                                        "format": "binary"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "تم تحديث البيانات بنجاح"
+                    },
+                    "422": {
+                        "description": "خطأ في البيانات المدخلة"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/account": {
+            "delete": {
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "حذف الحساب",
+                "operationId": "74ee784732c6de3c0e3dabc731b5b981",
+                "responses": {
+                    "200": {
+                        "description": "تم حذف الحساب بنجاح"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/change-password": {
+            "post": {
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "تغيير كلمة المرور",
+                "operationId": "88e8bff0f686a99070f87cdf1bac01e1",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "current_password",
+                                    "new_password",
+                                    "new_password_confirmation"
+                                ],
+                                "properties": {
+                                    "current_password": {
+                                        "type": "string",
+                                        "format": "password",
+                                        "example": "oldpassword123"
+                                    },
+                                    "new_password": {
+                                        "type": "string",
+                                        "format": "password",
+                                        "example": "newpassword123"
+                                    },
+                                    "new_password_confirmation": {
+                                        "type": "string",
+                                        "format": "password",
+                                        "example": "newpassword123"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "تم تغيير كلمة المرور بنجاح"
+                    },
+                    "403": {
+                        "description": "كلمة المرور الحالية غير صحيحة"
+                    },
+                    "422": {
+                        "description": "خطأ في مطابقة البيانات"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/forgot-password": {
+            "post": {
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "طلب إعادة ضبط كلمة المرور",
+                "operationId": "20d78161b19ac6afb56924e74974ec46",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "email"
+                                ],
+                                "properties": {
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "user@example.com"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "تم إرسال رابط إعادة الضبط"
+                    },
+                    "422": {
+                        "description": "البريد الإلكتروني غير موجود"
+                    }
+                }
+            }
+        },
+        "/api/reset-password": {
+            "post": {
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "إعادة ضبط كلمة المرور باستخدام التوكين",
+                "operationId": "0a6624b616e4ba5a310a61d9f7418c35",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "token",
+                                    "email",
+                                    "password",
+                                    "password_confirmation"
+                                ],
+                                "properties": {
+                                    "token": {
+                                        "type": "string",
+                                        "example": "sampletoken123"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "user@example.com"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "format": "password",
+                                        "example": "newpassword123"
+                                    },
+                                    "password_confirmation": {
+                                        "type": "string",
+                                        "format": "password",
+                                        "example": "newpassword123"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "تم إعادة ضبط كلمة المرور بنجاح"
+                    },
+                    "422": {
+                        "description": "التوكين غير صالح أو البيانات غير متطابقة"
+                    }
+                }
+            }
+        },
+        "/api/users": {
             "get": {
                 "tags": [
                     "Users"
                 ],
                 "summary": "جلب قائمة المستخدمين",
-                "operationId": "7e2f5799553ec93c9c43e2a58490d447",
+                "operationId": "c457726701591d1183b53aa71fc13441",
                 "responses": {
                     "200": {
                         "description": "تمت العملية بنجاح"
@@ -48,6 +467,10 @@
         }
     },
     "tags": [
+        {
+            "name": "Authentication",
+            "description": "إدارة الحسابات وتسجيل الدخول"
+        },
         {
             "name": "Users",
             "description": "Users"

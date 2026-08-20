@@ -3,17 +3,40 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Auth\Events\PasswordReset;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Str;
 use Illuminate\Support\Facades\Validator;
+use OpenApi\Attributes as OA;
 
+#[OA\Tag(name: "Authentication", description: "إدارة الحسابات وتسجيل الدخول")]
 class AuthController extends Controller
 {
+    #[OA\Post(
+        path: "/api/login",
+        summary: "تسجيل الدخول",
+        tags: ["Authentication"],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(
+                required: ["email", "password"],
+                properties: [
+                    new OA\Property(property: "email", type: "string", format: "email", example: "user@example.com"),
+                    new OA\Property(property: "password", type: "string", format: "password", example: "password123"),
+                ]
+            )
+        ),
+        responses: [
+            new OA\Response(response: 200, description: "تم تسجيل الدخول بنجاح"),
+            new OA\Response(response: 401, description: "بيانات الدخول غير صحيحة"),
+            new OA\Response(response: 403, description: "الحساب غير مفعل أو غير مأكد"),
+            new OA\Response(response: 422, description: "خطأ في البيانات المدخلة")
+        ]
+    )]
     public function apilogin(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -72,6 +95,30 @@ class AuthController extends Controller
         ], 200);
     }
 
+    #[OA\Post(
+        path: "/api/register",
+        summary: "تسجيل حساب جديد",
+        tags: ["Authentication"],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(
+                required: ["name", "email", "password", "password_confirmation"],
+                properties: [
+                    new OA\Property(property: "name", type: "string", example: "محمد ياسر"),
+                    new OA\Property(property: "email", type: "string", format: "email", example: "user@example.com"),
+                    new OA\Property(property: "password", type: "string", format: "password", example: "password123"),
+                    new OA\Property(property: "password_confirmation", type: "string", format: "password", example: "password123"),
+                    new OA\Property(property: "user_type", type: "string", enum: ["customer", "provider"], example: "customer"),
+                    new OA\Property(property: "phone", type: "string", example: "0599000000"),
+                    new OA\Property(property: "city_id", type: "integer", example: 1)
+                ]
+            )
+        ),
+        responses: [
+            new OA\Response(response: 201, description: "تم إنشاء الحساب بنجاح"),
+            new OA\Response(response: 422, description: "خطأ في البيانات المدخلة")
+        ]
+    )]
     public function register(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -114,6 +161,16 @@ class AuthController extends Controller
         ], 201);
     }
 
+    #[OA\Post(
+        path: "/api/logout",
+        summary: "تسجيل الخروج",
+        security: [["sanctum" => []]],
+        tags: ["Authentication"],
+        responses: [
+            new OA\Response(response: 200, description: "تم تسجيل الخروج بنجاح"),
+            new OA\Response(response: 400, description: "لا يوجد رمز دخول نشط")
+        ]
+    )]
     public function logout(Request $request)
     {
         $user = $request->user();
@@ -133,6 +190,25 @@ class AuthController extends Controller
         ], 200);
     }
 
+    #[OA\Post(
+        path: "/api/resend-verification-email",
+        summary: "إعادة إرسال بريد التفعيل",
+        tags: ["Authentication"],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(
+                required: ["email"],
+                properties: [
+                    new OA\Property(property: "email", type: "string", format: "email", example: "user@example.com")
+                ]
+            )
+        ),
+        responses: [
+            new OA\Response(response: 200, description: "تم إرسال رابط التفعيل"),
+            new OA\Response(response: 400, description: "البريد مفعّل مسبقاً"),
+            new OA\Response(response: 422, description: "البريد غير مسجل")
+        ]
+    )]
     public function resendVerificationEmail(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -166,6 +242,16 @@ class AuthController extends Controller
         ], 200);
     }
 
+    #[OA\Get(
+        path: "/api/profile",
+        summary: "عرض الملف الشخصي",
+        security: [["sanctum" => []]],
+        tags: ["Authentication"],
+        responses: [
+            new OA\Response(response: 200, description: "تم جلب البيانات بنجاح"),
+            new OA\Response(response: 401, description: "غير مصرح")
+        ]
+    )]
     public function profile(Request $request)
     {
         $user = $request->user();
@@ -187,6 +273,29 @@ class AuthController extends Controller
         ], 200);
     }
 
+    #[OA\Post(
+        path: "/api/profile/update",
+        summary: "تحديث الملف الشخصي",
+        security: [["sanctum" => []]],
+        tags: ["Authentication"],
+        requestBody: new OA\RequestBody(
+            content: new OA\MediaType(
+                mediaType: "multipart/form-data",
+                schema: new OA\Schema(
+                    properties: [
+                        new OA\Property(property: "name", type: "string", example: "محمد ياسر"),
+                        new OA\Property(property: "phone", type: "string", example: "0599000000"),
+                        new OA\Property(property: "city_id", type: "integer", example: 1),
+                        new OA\Property(property: "avatar", type: "string", format: "binary")
+                    ]
+                )
+            )
+        ),
+        responses: [
+            new OA\Response(response: 200, description: "تم تحديث البيانات بنجاح"),
+            new OA\Response(response: 422, description: "خطأ في البيانات المدخلة")
+        ]
+    )]
     public function updateProfile(Request $request)
     {
         $user = $request->user();
@@ -239,6 +348,15 @@ class AuthController extends Controller
         ], 200);
     }
 
+    #[OA\Delete(
+        path: "/api/account",
+        summary: "حذف الحساب",
+        security: [["sanctum" => []]],
+        tags: ["Authentication"],
+        responses: [
+            new OA\Response(response: 200, description: "تم حذف الحساب بنجاح")
+        ]
+    )]
     public function deleteAccount(Request $request)
     {
         $user = $request->user();
@@ -255,6 +373,28 @@ class AuthController extends Controller
         ], 200);
     }
 
+    #[OA\Post(
+        path: "/api/change-password",
+        summary: "تغيير كلمة المرور",
+        security: [["sanctum" => []]],
+        tags: ["Authentication"],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(
+                required: ["current_password", "new_password", "new_password_confirmation"],
+                properties: [
+                    new OA\Property(property: "current_password", type: "string", format: "password", example: "oldpassword123"),
+                    new OA\Property(property: "new_password", type: "string", format: "password", example: "newpassword123"),
+                    new OA\Property(property: "new_password_confirmation", type: "string", format: "password", example: "newpassword123")
+                ]
+            )
+        ),
+        responses: [
+            new OA\Response(response: 200, description: "تم تغيير كلمة المرور بنجاح"),
+            new OA\Response(response: 403, description: "كلمة المرور الحالية غير صحيحة"),
+            new OA\Response(response: 422, description: "خطأ في مطابقة البيانات")
+        ]
+    )]
     public function changePassword(Request $request)
     {
         $user = $request->user();
@@ -290,6 +430,24 @@ class AuthController extends Controller
         ], 200);
     }
 
+    #[OA\Post(
+        path: "/api/forgot-password",
+        summary: "طلب إعادة ضبط كلمة المرور",
+        tags: ["Authentication"],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(
+                required: ["email"],
+                properties: [
+                    new OA\Property(property: "email", type: "string", format: "email", example: "user@example.com")
+                ]
+            )
+        ),
+        responses: [
+            new OA\Response(response: 200, description: "تم إرسال رابط إعادة الضبط"),
+            new OA\Response(response: 422, description: "البريد الإلكتروني غير موجود")
+        ]
+    )]
     public function forgotPassword(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -321,6 +479,27 @@ class AuthController extends Controller
         ], 500);
     }
 
+    #[OA\Post(
+        path: "/api/reset-password",
+        summary: "إعادة ضبط كلمة المرور باستخدام التوكين",
+        tags: ["Authentication"],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(
+                required: ["token", "email", "password", "password_confirmation"],
+                properties: [
+                    new OA\Property(property: "token", type: "string", example: "sampletoken123"),
+                    new OA\Property(property: "email", type: "string", format: "email", example: "user@example.com"),
+                    new OA\Property(property: "password", type: "string", format: "password", example: "newpassword123"),
+                    new OA\Property(property: "password_confirmation", type: "string", format: "password", example: "newpassword123")
+                ]
+            )
+        ),
+        responses: [
+            new OA\Response(response: 200, description: "تم إعادة ضبط كلمة المرور بنجاح"),
+            new OA\Response(response: 422, description: "التوكين غير صالح أو البيانات غير متطابقة")
+        ]
+    )]
     public function resetPassword(Request $request)
     {
         $validator = Validator::make($request->all(), [
