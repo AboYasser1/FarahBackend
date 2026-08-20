@@ -21,6 +21,7 @@ class DatabaseSeeder extends Seeder
         ]);
 
         $this->call([
+            CitySeeder::class,
             CategorySeeder::class,
             ServiceSeeder::class,
             ReviewSeeder::class,
@@ -30,5 +31,3 @@ class DatabaseSeeder extends Seeder
         ]);
     }
 }
-
-
