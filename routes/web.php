@@ -21,3 +21,8 @@ require __DIR__.'/auth.php';
 Route::get('/check-db', function () {
     return response()->json(\Illuminate\Support\Facades\Schema::getTableListing());
 });
+
+Route::get('/run-seed-XYZ123SECRET', function () {
+    \Illuminate\Support\Facades\Artisan::call('db:seed', ['--class' => 'CitySeeder', '--force' => true]);
+    return response()->json(['output' => \Illuminate\Support\Facades\Artisan::output()]);
+});
