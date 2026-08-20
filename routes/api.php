@@ -23,7 +23,7 @@ Route::get('/services/{id}', [ServiceController::class, 'show']);
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'apilogin']);
 Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
-Route::post('/email/verification-notification', [AuthController::class, 'resendVerificationEmail']);
+Route::post('/resend-verification-email', [AuthController::class, 'resendVerificationEmail']);
 
 Route::post('/password/forgot', [AuthController::class, 'forgotPassword']);
 Route::post('/password/reset', [AuthController::class, 'resetPassword']);
