@@ -41,7 +41,7 @@ Route::get('/services/{id}', [ServiceController::class, 'show']);
 Route::post('/register', [AuthController::class, 'register']);
 
 // Login
-Route::post('/login', [AuthController::class, 'apilogin']);
+Route::post('/login', [AuthController::class, 'apilogin'])->name('login');;
 
 // Logout
 Route::post('/logout', [AuthController::class, 'logout'])
