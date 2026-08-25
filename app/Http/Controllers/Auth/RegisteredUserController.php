@@ -35,6 +35,8 @@ class RegisteredUserController extends Controller
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
             'city_id' => ['required', 'exists:cities,id'],
+            'phone' => ['nullable', 'string', 'max:25'],   // إذا كان حقل الهاتف مستخدماً
+            'user_type' => ['nullable', 'string'],
         ]);
 
         $user = User::create([
@@ -42,6 +44,8 @@ class RegisteredUserController extends Controller
             'email' => $request->email,
             'password' => Hash::make($request->password),
             'city_id' => $request->city_id,
+            'phone' => $request->phone,
+            'user_type' => $request->user_type ?? 'customer',
         ]);
 
         event(new Registered($user));
