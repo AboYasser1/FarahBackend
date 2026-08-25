@@ -103,6 +103,8 @@ Route::middleware('auth:sanctum')->group(function () {
         '/change-password',
         [AuthController::class, 'changePassword']
     );
+
+    Route::get('/users', [UserController::class, 'index']);
 });
 
 
@@ -112,4 +114,3 @@ Route::middleware('auth:sanctum')->group(function () {
 |--------------------------------------------------------------------------
 */
 
-Route::get('/users', [UserController::class, 'index']);
