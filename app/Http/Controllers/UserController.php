@@ -9,6 +9,7 @@ class UserController extends Controller
     #[OA\Get(
         path: "/api/users",
         summary: "جلب قائمة المستخدمين",
+        security: [["bearerAuth" => []]],
         tags: ["Users"],
         responses: [
             new OA\Response(

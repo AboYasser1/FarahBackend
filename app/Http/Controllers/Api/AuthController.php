@@ -13,13 +13,13 @@ use Illuminate\Support\Facades\Str;
 use Illuminate\Support\Facades\Validator;
 use OpenApi\Attributes as OA;
 
-#[OA\Tag(name: "Authentication", description: "إدارة الحسابات وتسجيل الدخول")]
+#[OA\Tag(name: "Auth", description: "إدارة الحسابات والمصادقة والملف الشخصي")]
 class AuthController extends Controller
 {
     #[OA\Post(
         path: "/api/login",
         summary: "تسجيل الدخول",
-        tags: ["Authentication"],
+        tags: ["Auth"],
         requestBody: new OA\RequestBody(
             required: true,
             content: new OA\JsonContent(
@@ -31,10 +31,65 @@ class AuthController extends Controller
             )
         ),
         responses: [
-            new OA\Response(response: 200, description: "تم تسجيل الدخول بنجاح"),
-            new OA\Response(response: 401, description: "بيانات الدخول غير صحيحة"),
-            new OA\Response(response: 403, description: "الحساب غير مفعل أو غير مأكد"),
-            new OA\Response(response: 422, description: "خطأ في البيانات المدخلة")
+            new OA\Response(
+                response: 200,
+                description: "تم تسجيل الدخول بنجاح",
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: "icon", type: "string", example: "success"),
+                        new OA\Property(property: "title", type: "string", example: "Login successful"),
+                        new OA\Property(
+                            property: "data",
+                            type: "object",
+                            properties: [
+                                new OA\Property(property: "token", type: "string", example: "1|laravel_sanctum_token_here"),
+                                new OA\Property(property: "token_type", type: "string", example: "Bearer"),
+                                new OA\Property(
+                                    property: "user",
+                                    type: "object",
+                                    properties: [
+                                        new OA\Property(property: "id", type: "integer", example: 1),
+                                        new OA\Property(property: "name", type: "string", example: "محمد ياسر"),
+                                        new OA\Property(property: "email", type: "string", example: "user@example.com"),
+                                        new OA\Property(property: "role", type: "string", example: "customer")
+                                    ]
+                                )
+                            ]
+                        )
+                    ]
+                )
+            ),
+            new OA\Response(
+                response: 401,
+                description: "بيانات الدخول غير صحيحة",
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: "icon", type: "string", example: "error"),
+                        new OA\Property(property: "title", type: "string", example: "The email or password is incorrect.")
+                    ]
+                )
+            ),
+            new OA\Response(
+                response: 403,
+                description: "الحساب غير مفعل أو غير مأكد",
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: "icon", type: "string", example: "error"),
+                        new OA\Property(property: "title", type: "string", example: "This account is inactive. Please contact admin.")
+                    ]
+                )
+            ),
+            new OA\Response(
+                response: 422,
+                description: "خطأ في البيانات المدخلة",
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: "icon", type: "string", example: "error"),
+                        new OA\Property(property: "title", type: "string", example: "الرجاء إدخال بريد إلكتروني صالح"),
+                        new OA\Property(property: "errors", type: "object")
+                    ]
+                )
+            )
         ]
     )]
     public function apilogin(Request $request)
@@ -98,7 +153,7 @@ class AuthController extends Controller
     #[OA\Post(
         path: "/api/register",
         summary: "تسجيل حساب جديد",
-        tags: ["Authentication"],
+        tags: ["Auth"],
         requestBody: new OA\RequestBody(
             required: true,
             content: new OA\JsonContent(
@@ -115,8 +170,27 @@ class AuthController extends Controller
             )
         ),
         responses: [
-            new OA\Response(response: 201, description: "تم إنشاء الحساب بنجاح"),
-            new OA\Response(response: 422, description: "خطأ في البيانات المدخلة")
+            new OA\Response(
+                response: 201,
+                description: "تم إنشاء الحساب بنجاح",
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: "icon", type: "string", example: "success"),
+                        new OA\Property(property: "title", type: "string", example: "Registration successful. Please verify your email.")
+                    ]
+                )
+            ),
+            new OA\Response(
+                response: 422,
+                description: "خطأ في البيانات المدخلة",
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: "icon", type: "string", example: "error"),
+                        new OA\Property(property: "title", type: "string", example: "هذا البريد الإلكتروني مستخدم بالفعل"),
+                        new OA\Property(property: "errors", type: "object")
+                    ]
+                )
+            )
         ]
     )]
     public function register(Request $request)
@@ -164,11 +238,30 @@ class AuthController extends Controller
     #[OA\Post(
         path: "/api/logout",
         summary: "تسجيل الخروج",
-        security: [["sanctum" => []]],
-        tags: ["Authentication"],
+        security: [["bearerAuth" => []]],
+        tags: ["Auth"],
         responses: [
-            new OA\Response(response: 200, description: "تم تسجيل الخروج بنجاح"),
-            new OA\Response(response: 400, description: "لا يوجد رمز دخول نشط")
+            new OA\Response(
+                response: 200,
+                description: "تم تسجيل الخروج بنجاح",
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: "icon", type: "string", example: "success"),
+                        new OA\Property(property: "title", type: "string", example: "Logout successful.")
+                    ]
+                )
+            ),
+            new OA\Response(
+                response: 400,
+                description: "لا يوجد رمز دخول نشط",
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: "icon", type: "string", example: "error"),
+                        new OA\Property(property: "title", type: "string", example: "Unable to logout. No active token found.")
+                    ]
+                )
+            ),
+            new OA\Response(response: 401, description: "غير مصرح (Unauthenticated)")
         ]
     )]
     public function logout(Request $request)
@@ -193,7 +286,7 @@ class AuthController extends Controller
     #[OA\Post(
         path: "/api/resend-verification-email",
         summary: "إعادة إرسال بريد التفعيل",
-        tags: ["Authentication"],
+        tags: ["Auth"],
         requestBody: new OA\RequestBody(
             required: true,
             content: new OA\JsonContent(
@@ -204,9 +297,37 @@ class AuthController extends Controller
             )
         ),
         responses: [
-            new OA\Response(response: 200, description: "تم إرسال رابط التفعيل"),
-            new OA\Response(response: 400, description: "البريد مفعّل مسبقاً"),
-            new OA\Response(response: 422, description: "البريد غير مسجل")
+            new OA\Response(
+                response: 200,
+                description: "تم إرسال رابط التفعيل",
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: "icon", type: "string", example: "success"),
+                        new OA\Property(property: "title", type: "string", example: "Verification email sent.")
+                    ]
+                )
+            ),
+            new OA\Response(
+                response: 400,
+                description: "البريد مفعّل مسبقاً",
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: "icon", type: "string", example: "error"),
+                        new OA\Property(property: "title", type: "string", example: "Email is already verified.")
+                    ]
+                )
+            ),
+            new OA\Response(
+                response: 422,
+                description: "البريد غير مسجل",
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: "icon", type: "string", example: "error"),
+                        new OA\Property(property: "title", type: "string", example: "هذا البريد غير مسجل."),
+                        new OA\Property(property: "errors", type: "object")
+                    ]
+                )
+            )
         ]
     )]
     public function resendVerificationEmail(Request $request)
@@ -245,11 +366,40 @@ class AuthController extends Controller
     #[OA\Get(
         path: "/api/profile",
         summary: "عرض الملف الشخصي",
-        security: [["sanctum" => []]],
-        tags: ["Authentication"],
+        security: [["bearerAuth" => []]],
+        tags: ["Auth"],
         responses: [
-            new OA\Response(response: 200, description: "تم جلب البيانات بنجاح"),
-            new OA\Response(response: 401, description: "غير مصرح")
+            new OA\Response(
+                response: 200,
+                description: "تم جلب البيانات بنجاح",
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: "icon", type: "string", example: "success"),
+                        new OA\Property(property: "title", type: "string", example: "Profile loaded"),
+                        new OA\Property(
+                            property: "data",
+                            type: "object",
+                            properties: [
+                                new OA\Property(property: "id", type: "integer", example: 1),
+                                new OA\Property(property: "name", type: "string", example: "محمد ياسر"),
+                                new OA\Property(property: "phone", type: "string", example: "0599000000"),
+                                new OA\Property(property: "avatar", type: "string", nullable: true, example: "/storage/avatars/avatar1.jpg"),
+                                new OA\Property(property: "city_id", type: "integer", example: 1),
+                                new OA\Property(
+                                    property: "city",
+                                    type: "object",
+                                    nullable: true,
+                                    properties: [
+                                        new OA\Property(property: "id", type: "integer", example: 1),
+                                        new OA\Property(property: "name", type: "string", example: "غزة")
+                                    ]
+                                )
+                            ]
+                        )
+                    ]
+                )
+            ),
+            new OA\Response(response: 401, description: "غير مصرح (Unauthenticated)")
         ]
     )]
     public function profile(Request $request)
@@ -276,8 +426,8 @@ class AuthController extends Controller
     #[OA\Post(
         path: "/api/profile/update",
         summary: "تحديث الملف الشخصي",
-        security: [["sanctum" => []]],
-        tags: ["Authentication"],
+        security: [["bearerAuth" => []]],
+        tags: ["Auth"],
         requestBody: new OA\RequestBody(
             content: new OA\MediaType(
                 mediaType: "multipart/form-data",
@@ -292,8 +442,48 @@ class AuthController extends Controller
             )
         ),
         responses: [
-            new OA\Response(response: 200, description: "تم تحديث البيانات بنجاح"),
-            new OA\Response(response: 422, description: "خطأ في البيانات المدخلة")
+            new OA\Response(
+                response: 200,
+                description: "تم تحديث البيانات بنجاح",
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: "icon", type: "string", example: "success"),
+                        new OA\Property(property: "title", type: "string", example: "Profile updated successfully."),
+                        new OA\Property(
+                            property: "data",
+                            type: "object",
+                            properties: [
+                                new OA\Property(property: "id", type: "integer", example: 1),
+                                new OA\Property(property: "name", type: "string", example: "محمد ياسر"),
+                                new OA\Property(property: "phone", type: "string", example: "0599000000"),
+                                new OA\Property(property: "avatar", type: "string", nullable: true, example: "/storage/avatars/new_avatar.jpg"),
+                                new OA\Property(property: "city_id", type: "integer", example: 1),
+                                new OA\Property(
+                                    property: "city",
+                                    type: "object",
+                                    nullable: true,
+                                    properties: [
+                                        new OA\Property(property: "id", type: "integer", example: 1),
+                                        new OA\Property(property: "name", type: "string", example: "غزة")
+                                    ]
+                                )
+                            ]
+                        )
+                    ]
+                )
+            ),
+            new OA\Response(response: 401, description: "غير مصرح (Unauthenticated)"),
+            new OA\Response(
+                response: 422,
+                description: "خطأ في البيانات المدخلة",
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: "icon", type: "string", example: "error"),
+                        new OA\Property(property: "title", type: "string", example: "المدينة غير صالحة. اختر المدينة من القائمة."),
+                        new OA\Property(property: "errors", type: "object")
+                    ]
+                )
+            )
         ]
     )]
     public function updateProfile(Request $request)
@@ -351,10 +541,20 @@ class AuthController extends Controller
     #[OA\Delete(
         path: "/api/account",
         summary: "حذف الحساب",
-        security: [["sanctum" => []]],
-        tags: ["Authentication"],
+        security: [["bearerAuth" => []]],
+        tags: ["Auth"],
         responses: [
-            new OA\Response(response: 200, description: "تم حذف الحساب بنجاح")
+            new OA\Response(
+                response: 200,
+                description: "تم حذف الحساب بنجاح",
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: "icon", type: "string", example: "success"),
+                        new OA\Property(property: "title", type: "string", example: "Account deleted successfully.")
+                    ]
+                )
+            ),
+            new OA\Response(response: 401, description: "غير مصرح (Unauthenticated)")
         ]
     )]
     public function deleteAccount(Request $request)
@@ -376,8 +576,8 @@ class AuthController extends Controller
     #[OA\Post(
         path: "/api/change-password",
         summary: "تغيير كلمة المرور",
-        security: [["sanctum" => []]],
-        tags: ["Authentication"],
+        security: [["bearerAuth" => []]],
+        tags: ["Auth"],
         requestBody: new OA\RequestBody(
             required: true,
             content: new OA\JsonContent(
@@ -390,9 +590,38 @@ class AuthController extends Controller
             )
         ),
         responses: [
-            new OA\Response(response: 200, description: "تم تغيير كلمة المرور بنجاح"),
-            new OA\Response(response: 403, description: "كلمة المرور الحالية غير صحيحة"),
-            new OA\Response(response: 422, description: "خطأ في مطابقة البيانات")
+            new OA\Response(
+                response: 200,
+                description: "تم تغيير كلمة المرور بنجاح",
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: "icon", type: "string", example: "success"),
+                        new OA\Property(property: "title", type: "string", example: "Password changed successfully.")
+                    ]
+                )
+            ),
+            new OA\Response(response: 401, description: "غير مصرح (Unauthenticated)"),
+            new OA\Response(
+                response: 403,
+                description: "كلمة المرور الحالية غير صحيحة",
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: "icon", type: "string", example: "error"),
+                        new OA\Property(property: "title", type: "string", example: "Current password is incorrect.")
+                    ]
+                )
+            ),
+            new OA\Response(
+                response: 422,
+                description: "خطأ في مطابقة البيانات",
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: "icon", type: "string", example: "error"),
+                        new OA\Property(property: "title", type: "string", example: "تأكيد كلمة المرور الجديدة لا يطابق."),
+                        new OA\Property(property: "errors", type: "object")
+                    ]
+                )
+            )
         ]
     )]
     public function changePassword(Request $request)
@@ -433,7 +662,7 @@ class AuthController extends Controller
     #[OA\Post(
         path: "/api/forgot-password",
         summary: "طلب إعادة ضبط كلمة المرور",
-        tags: ["Authentication"],
+        tags: ["Auth"],
         requestBody: new OA\RequestBody(
             required: true,
             content: new OA\JsonContent(
@@ -444,8 +673,27 @@ class AuthController extends Controller
             )
         ),
         responses: [
-            new OA\Response(response: 200, description: "تم إرسال رابط إعادة الضبط"),
-            new OA\Response(response: 422, description: "البريد الإلكتروني غير موجود")
+            new OA\Response(
+                response: 200,
+                description: "تم إرسال رابط إعادة الضبط",
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: "icon", type: "string", example: "success"),
+                        new OA\Property(property: "title", type: "string", example: "Password reset link sent.")
+                    ]
+                )
+            ),
+            new OA\Response(
+                response: 422,
+                description: "البريد الإلكتروني غير موجود",
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: "icon", type: "string", example: "error"),
+                        new OA\Property(property: "title", type: "string", example: "هذا البريد غير مسجل."),
+                        new OA\Property(property: "errors", type: "object")
+                    ]
+                )
+            )
         ]
     )]
     public function forgotPassword(Request $request)
@@ -482,7 +730,7 @@ class AuthController extends Controller
     #[OA\Post(
         path: "/api/reset-password",
         summary: "إعادة ضبط كلمة المرور باستخدام التوكين",
-        tags: ["Authentication"],
+        tags: ["Auth"],
         requestBody: new OA\RequestBody(
             required: true,
             content: new OA\JsonContent(
@@ -496,8 +744,27 @@ class AuthController extends Controller
             )
         ),
         responses: [
-            new OA\Response(response: 200, description: "تم إعادة ضبط كلمة المرور بنجاح"),
-            new OA\Response(response: 422, description: "التوكين غير صالح أو البيانات غير متطابقة")
+            new OA\Response(
+                response: 200,
+                description: "تم إعادة ضبط كلمة المرور بنجاح",
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: "icon", type: "string", example: "success"),
+                        new OA\Property(property: "title", type: "string", example: "Password has been reset successfully.")
+                    ]
+                )
+            ),
+            new OA\Response(
+                response: 422,
+                description: "التوكين غير صالح أو البيانات غير متطابقة",
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: "icon", type: "string", example: "error"),
+                        new OA\Property(property: "title", type: "string", example: "Unable to reset password."),
+                        new OA\Property(property: "errors", type: "object")
+                    ]
+                )
+            )
         ]
     )]
     public function resetPassword(Request $request)
