@@ -10,12 +10,12 @@ use OpenApi\Attributes as OA;
     description: "توثيق واجهات برمجة التطبيقات (APIs) لمنصة فرح لتطبيق Flutter"
 )]
 #[OA\Server(
-    url: "http://127.0.0.1:8000",
-    description: "السيرفر المحلي (Local Server)"
+    url: "https://farahbackend-production.up.railway.app",
+    description: "سيرفر الإنتاج (Railway Production)"
 )]
 #[OA\Server(
-    url: "https://farah-backend-1.onrender.com",
-    description: "سيرفر الإنتاج (Production Server)"
+    url: "http://127.0.0.1:8000",
+    description: "السيرفر المحلي (Local Server)"
 )]
 #[OA\SecurityScheme(
     securityScheme: "bearerAuth",

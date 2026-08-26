@@ -7,12 +7,12 @@
     },
     "servers": [
         {
-            "url": "http://127.0.0.1:8000",
-            "description": "السيرفر المحلي (Local Server)"
+            "url": "https://farahbackend-production.up.railway.app",
+            "description": "سيرفر الإنتاج (Railway Production)"
         },
         {
-            "url": "https://farah-backend-1.onrender.com",
-            "description": "سيرفر الإنتاج (Production Server)"
+            "url": "http://127.0.0.1:8000",
+            "description": "السيرفر المحلي (Local Server)"
         }
     ],
     "paths": {
