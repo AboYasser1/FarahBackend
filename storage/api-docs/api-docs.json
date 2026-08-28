@@ -277,6 +277,41 @@
                 }
             }
         },
+        "/api/email/verify/{id}/{hash}": {
+            "get": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "تأكيد وتفعيل البريد الإلكتروني عبر الرابط الموقع",
+                "operationId": "9f2e6865b5056f77d9d30e8324d549fa",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "hash",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "تم تفعيل البريد بنجاح"
+                    },
+                    "403": {
+                        "description": "رابط التفعيل غير صالح"
+                    }
+                }
+            }
+        },
         "/api/logout": {
             "post": {
                 "tags": [

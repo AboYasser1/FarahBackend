@@ -5,8 +5,10 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Auth\Events\PasswordReset;
+use Illuminate\Auth\Events\Verified;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Str;
@@ -227,12 +229,69 @@ class AuthController extends Controller
             'status' => 'active',
         ]);
 
-        $user->sendEmailVerificationNotification();
+        try {
+            $user->sendEmailVerificationNotification();
+        } catch (\Throwable $e) {
+            Log::warning('Email verification notification could not be sent: ' . $e->getMessage());
+        }
+
+        $token = $user->createToken('api_Token')->plainTextToken;
 
         return response()->json([
             'icon' => 'success',
             'title' => 'Registration successful. Please verify your email.',
+            'data' => [
+                'token' => $token,
+                'token_type' => 'Bearer',
+                'user' => [
+                    'id' => $user->id,
+                    'name' => $user->name,
+                    'email' => $user->email,
+                    'role' => $user->user_type ?? 'customer',
+                ],
+            ],
         ], 201);
+    }
+
+    #[OA\Get(
+        path: "/api/email/verify/{id}/{hash}",
+        summary: "تأكيد وتفعيل البريد الإلكتروني عبر الرابط الموقع",
+        tags: ["Auth"],
+        parameters: [
+            new OA\Parameter(name: "id", in: "path", required: true, schema: new OA\Schema(type: "integer")),
+            new OA\Parameter(name: "hash", in: "path", required: true, schema: new OA\Schema(type: "string"))
+        ],
+        responses: [
+            new OA\Response(response: 200, description: "تم تفعيل البريد بنجاح"),
+            new OA\Response(response: 403, description: "رابط التفعيل غير صالح")
+        ]
+    )]
+    public function verifyEmail(Request $request, $id, $hash)
+    {
+        $user = User::findOrFail($id);
+
+        if (! hash_equals((string) $hash, sha1($user->getEmailForVerification()))) {
+            return response()->json([
+                'icon' => 'error',
+                'title' => 'Invalid verification link.',
+            ], 403);
+        }
+
+        if ($user->hasVerifiedEmail()) {
+            return response()->json([
+                'icon' => 'success',
+                'title' => 'Email is already verified.',
+            ], 200);
+        }
+
+        if ($user->markEmailAsVerified()) {
+            event(new Verified($user));
+        }
+
+        return response()->json([
+            'icon' => 'success',
+            'title' => 'Email has been verified successfully.',
+        ], 200);
     }
 
     #[OA\Post(
@@ -355,7 +414,11 @@ class AuthController extends Controller
             ], 400);
         }
 
-        $user->sendEmailVerificationNotification();
+        try {
+            $user->sendEmailVerificationNotification();
+        } catch (\Throwable $e) {
+            Log::warning('Resend email verification notification failed: ' . $e->getMessage());
+        }
 
         return response()->json([
             'icon' => 'success',

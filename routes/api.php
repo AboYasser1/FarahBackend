@@ -36,6 +36,9 @@ Route::get('/services/{id}', [ServiceController::class, 'show']);
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'apilogin'])->name('login');
 Route::post('/resend-verification-email', [AuthController::class, 'resendVerificationEmail']);
+Route::get('/email/verify/{id}/{hash}', [AuthController::class, 'verifyEmail'])
+    ->middleware(['signed', 'throttle:6,1'])
+    ->name('verification.verify');
 
 // Password Reset
 Route::post('/forgot-password', [AuthController::class, 'forgotPassword']);
