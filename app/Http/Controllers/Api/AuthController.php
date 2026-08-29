@@ -127,13 +127,6 @@ class AuthController extends Controller
             ], 403);
         }
 
-        if (! $user->hasVerifiedEmail()) {
-            return response()->json([
-                'icon' => 'error',
-                'title' => 'Please verify your email before logging in.',
-            ], 403);
-        }
-
         $token = $user->createToken('api_Token')->plainTextToken;
 
         return response()->json([
@@ -227,6 +220,7 @@ class AuthController extends Controller
             'phone' => $request->phone,
             'city_id' => $request->city_id,
             'status' => 'active',
+            'email_verified_at' => now(),
         ]);
 
         try {
