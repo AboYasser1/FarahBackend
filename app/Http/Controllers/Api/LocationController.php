@@ -3,9 +3,9 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Api\LocationRequest;
 use App\Models\Location;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
 use OpenApi\Attributes as OA;
 
 #[OA\Tag(name: "Locations", description: "إدارة عناوين ومواقع المستخدمين")]
@@ -65,25 +65,9 @@ class LocationController extends Controller
             new OA\Response(response: 401, description: "غير مصرح")
         ]
     )]
-    public function store(Request $request)
+    public function store(LocationRequest $request)
     {
-        $validator = Validator::make($request->all(), [
-            'label' => 'nullable|string|max:255',
-            'address' => 'nullable|string',
-            'city_id' => 'nullable|exists:cities,id',
-            'latitude' => 'nullable|numeric|between:-90,90',
-            'longitude' => 'nullable|numeric|between:-180,180',
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json([
-                'icon' => 'error',
-                'title' => $validator->errors()->first(),
-                'errors' => $validator->errors(),
-            ], 422);
-        }
-
-        $location = $request->user()->locations()->create($validator->validated());
+        $location = $request->user()->locations()->create($request->validated());
 
         return response()->json([
             'icon' => 'success',
@@ -157,27 +141,11 @@ class LocationController extends Controller
             new OA\Response(response: 401, description: "غير مصرح")
         ]
     )]
-    public function update(Request $request, Location $location)
+    public function update(LocationRequest $request, Location $location)
     {
         $this->authorizeLocation($request, $location);
 
-        $validator = Validator::make($request->all(), [
-            'label' => 'nullable|string|max:255',
-            'address' => 'nullable|string',
-            'city_id' => 'nullable|exists:cities,id',
-            'latitude' => 'nullable|numeric|between:-90,90',
-            'longitude' => 'nullable|numeric|between:-180,180',
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json([
-                'icon' => 'error',
-                'title' => $validator->errors()->first(),
-                'errors' => $validator->errors(),
-            ], 422);
-        }
-
-        $location->update($validator->validated());
+        $location->update($request->validated());
 
         return response()->json([
             'icon' => 'success',

@@ -135,7 +135,7 @@ class ServiceController extends Controller
     )]
     public function index(Request $request)
     {
-        $query = Service::with(['category', 'provider.user', 'images', 'reviews.user'])
+        $query = Service::with(['category', 'provider', 'images', 'reviews.user'])
             ->where('status', 'active');
 
         if ($request->filled('category_id')) {
@@ -143,8 +143,11 @@ class ServiceController extends Controller
         }
 
         if ($request->filled('search')) {
-            $query->where('title', 'like', '%' . $request->search . '%')
-                ->orWhere('description', 'like', '%' . $request->search . '%');
+            $searchTerm = '%' . $request->search . '%';
+            $query->where(function ($q) use ($searchTerm) {
+                $q->where('title', 'like', $searchTerm)
+                  ->orWhere('description', 'like', $searchTerm);
+            });
         }
 
         $services = $query->latest()->paginate(12);
@@ -198,14 +201,8 @@ class ServiceController extends Controller
                                     type: "object",
                                     properties: [
                                         new OA\Property(property: "id", type: "integer", example: 4),
-                                        new OA\Property(
-                                            property: "user",
-                                            type: "object",
-                                            properties: [
-                                                new OA\Property(property: "id", type: "integer", example: 10),
-                                                new OA\Property(property: "name", type: "string", example: "أحمد مصور")
-                                            ]
-                                        )
+                                        new OA\Property(property: "name", type: "string", example: "أحمد مصور"),
+                                        new OA\Property(property: "email", type: "string", example: "ahmed@example.com")
                                     ]
                                 ),
                                 new OA\Property(
@@ -250,7 +247,7 @@ class ServiceController extends Controller
     )]
     public function show($id)
     {
-        $service = Service::with(['category', 'provider.user', 'images', 'reviews.user'])
+        $service = Service::with(['category', 'provider', 'images', 'reviews.user'])
             ->where('status', 'active')
             ->findOrFail($id);
 

@@ -1845,18 +1845,13 @@
                                                             "type": "integer",
                                                             "example": 4
                                                         },
-                                                        "user": {
-                                                            "properties": {
-                                                                "id": {
-                                                                    "type": "integer",
-                                                                    "example": 10
-                                                                },
-                                                                "name": {
-                                                                    "type": "string",
-                                                                    "example": "أحمد مصور"
-                                                                }
-                                                            },
-                                                            "type": "object"
+                                                        "name": {
+                                                            "type": "string",
+                                                            "example": "أحمد مصور"
+                                                        },
+                                                        "email": {
+                                                            "type": "string",
+                                                            "example": "ahmed@example.com"
                                                         }
                                                     },
                                                     "type": "object"
@@ -1924,28 +1919,6 @@
                     }
                 }
             }
-        },
-        "/api/users": {
-            "get": {
-                "tags": [
-                    "Users"
-                ],
-                "summary": "جلب قائمة المستخدمين",
-                "operationId": "c457726701591d1183b53aa71fc13441",
-                "responses": {
-                    "200": {
-                        "description": "تمت العملية بنجاح"
-                    },
-                    "401": {
-                        "description": "غير مصرح"
-                    }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
-            }
         }
     },
     "components": {
@@ -1984,10 +1957,6 @@
         {
             "name": "Services",
             "description": "الخدمات والمزودين"
-        },
-        {
-            "name": "Users",
-            "description": "Users"
         }
     ]
 }

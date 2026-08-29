@@ -3,6 +3,13 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Api\ChangePasswordRequest;
+use App\Http\Requests\Api\ForgotPasswordRequest;
+use App\Http\Requests\Api\LoginRequest;
+use App\Http\Requests\Api\RegisterRequest;
+use App\Http\Requests\Api\ResendVerificationEmailRequest;
+use App\Http\Requests\Api\ResetPasswordRequest;
+use App\Http\Requests\Api\UpdateProfileRequest;
 use App\Models\User;
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Auth\Events\Verified;
@@ -12,7 +19,6 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Str;
-use Illuminate\Support\Facades\Validator;
 use OpenApi\Attributes as OA;
 
 #[OA\Tag(name: "Auth", description: "إدارة الحسابات والمصادقة والملف الشخصي")]
@@ -94,23 +100,8 @@ class AuthController extends Controller
             )
         ]
     )]
-    public function apilogin(Request $request)
+    public function apilogin(LoginRequest $request)
     {
-        $validator = Validator::make($request->all(), [
-            'email' => 'required|email',
-            'password' => 'required|string',
-        ], [
-            'email.email' => 'الرجاء إدخال بريد إلكتروني صالح',
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json([
-                'icon' => 'error',
-                'title' => $validator->errors()->first(),
-                'errors' => $validator->errors(),
-            ], 422);
-        }
-
         $user = User::where('email', $request->email)->first();
 
         if (! $user || ! Hash::check($request->password, $user->password)) {
@@ -188,30 +179,8 @@ class AuthController extends Controller
             )
         ]
     )]
-    public function register(Request $request)
+    public function register(RegisterRequest $request)
     {
-        $validator = Validator::make($request->all(), [
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email',
-            'password' => 'required|string|confirmed|min:8',
-            'user_type' => 'nullable|in:customer,provider',
-            'phone' => 'nullable|string|max:45',
-            'city_id' => 'nullable|exists:cities,id',
-        ], [
-            'email.email' => 'الرجاء إدخال بريد إلكتروني صالح',
-            'email.unique' => 'هذا البريد الإلكتروني مستخدم بالفعل',
-            'user_type.in' => 'نوع الحساب غير صالح. استخدم customer أو provider.',
-            'city_id.exists' => 'المنطقة غير صالحة. اختر المدينة من القائمة.',
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json([
-                'icon' => 'error',
-                'title' => $validator->errors()->first(),
-                'errors' => $validator->errors(),
-            ], 422);
-        }
-
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
@@ -220,7 +189,7 @@ class AuthController extends Controller
             'phone' => $request->phone,
             'city_id' => $request->city_id,
             'status' => 'active',
-            'email_verified_at' => now(),
+            'email_verified_at' => null,
         ]);
 
         try {
@@ -383,22 +352,8 @@ class AuthController extends Controller
             )
         ]
     )]
-    public function resendVerificationEmail(Request $request)
+    public function resendVerificationEmail(ResendVerificationEmailRequest $request)
     {
-        $validator = Validator::make($request->all(), [
-            'email' => 'required|email|exists:users,email',
-        ], [
-            'email.exists' => 'هذا البريد غير مسجل.',
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json([
-                'icon' => 'error',
-                'title' => $validator->errors()->first(),
-                'errors' => $validator->errors(),
-            ], 422);
-        }
-
         $user = User::where('email', $request->email)->first();
 
         if ($user->hasVerifiedEmail()) {
@@ -543,30 +498,10 @@ class AuthController extends Controller
             )
         ]
     )]
-    public function updateProfile(Request $request)
+    public function updateProfile(UpdateProfileRequest $request)
     {
         $user = $request->user();
-
-        $validator = Validator::make($request->all(), [
-            'name' => 'nullable|string|max:255',
-            'phone' => 'nullable|string|max:45',
-            'city_id' => 'nullable|exists:cities,id',
-            'avatar' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:4096',
-        ], [
-            'city_id.exists' => 'المدينة غير صالحة. اختر المدينة من القائمة.',
-            'avatar.image' => 'الملف يجب أن يكون صورة.',
-            'avatar.mimes' => 'نوع الصورة غير مدعوم. استخدم jpeg أو png أو jpg أو gif أو svg.',
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json([
-                'icon' => 'error',
-                'title' => $validator->errors()->first(),
-                'errors' => $validator->errors(),
-            ], 422);
-        }
-
-        $data = $validator->validated();
+        $data = $request->validated();
 
         if ($request->hasFile('avatar')) {
             if ($user->avatar && Storage::disk('public')->exists($user->avatar)) {
@@ -681,24 +616,9 @@ class AuthController extends Controller
             )
         ]
     )]
-    public function changePassword(Request $request)
+    public function changePassword(ChangePasswordRequest $request)
     {
         $user = $request->user();
-
-        $validator = Validator::make($request->all(), [
-            'current_password' => 'required|string',
-            'new_password' => 'required|string|confirmed|min:8',
-        ], [
-            'new_password.confirmed' => 'تأكيد كلمة المرور الجديدة لا يطابق.',
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json([
-                'icon' => 'error',
-                'title' => $validator->errors()->first(),
-                'errors' => $validator->errors(),
-            ], 422);
-        }
 
         if (! Hash::check($request->current_password, $user->password)) {
             return response()->json([
@@ -753,22 +673,8 @@ class AuthController extends Controller
             )
         ]
     )]
-    public function forgotPassword(Request $request)
+    public function forgotPassword(ForgotPasswordRequest $request)
     {
-        $validator = Validator::make($request->all(), [
-            'email' => 'required|email|exists:users,email',
-        ], [
-            'email.exists' => 'هذا البريد غير مسجل.',
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json([
-                'icon' => 'error',
-                'title' => $validator->errors()->first(),
-                'errors' => $validator->errors(),
-            ], 422);
-        }
-
         try {
             $status = Password::sendResetLink($request->only('email'));
 
@@ -834,22 +740,8 @@ class AuthController extends Controller
             )
         ]
     )]
-    public function resetPassword(Request $request)
+    public function resetPassword(ResetPasswordRequest $request)
     {
-        $validator = Validator::make($request->all(), [
-            'token' => 'required|string',
-            'email' => 'required|email|exists:users,email',
-            'password' => 'required|string|confirmed|min:8',
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json([
-                'icon' => 'error',
-                'title' => $validator->errors()->first(),
-                'errors' => $validator->errors(),
-            ], 422);
-        }
-
         $status = Password::reset(
             $request->only('email', 'password', 'password_confirmation', 'token'),
             function ($user, $password) {

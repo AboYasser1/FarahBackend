@@ -9,7 +9,6 @@ use App\Http\Controllers\Api\CityController;
 use App\Http\Controllers\Api\HomeController;
 use App\Http\Controllers\Api\LocationController;
 use App\Http\Controllers\Api\ServiceController;
-use App\Http\Controllers\UserController;
 
 /*
 |--------------------------------------------------------------------------
@@ -69,6 +68,4 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Locations (CRUD)
     Route::apiResource('locations', LocationController::class);
-
-    // Users List
 });
