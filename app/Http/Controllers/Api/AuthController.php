@@ -769,19 +769,29 @@ class AuthController extends Controller
             ], 422);
         }
 
-        $status = Password::sendResetLink($request->only('email'));
+        try {
+            $status = Password::sendResetLink($request->only('email'));
 
-        if ($status === Password::RESET_LINK_SENT) {
+            if ($status === Password::RESET_LINK_SENT) {
+                return response()->json([
+                    'icon' => 'success',
+                    'title' => 'Password reset link sent.',
+                ], 200);
+            }
+
             return response()->json([
-                'icon' => 'success',
-                'title' => 'Password reset link sent.',
-            ], 200);
-        }
+                'icon' => 'error',
+                'title' => 'Unable to send password reset link.',
+            ], 400);
+        } catch (\Throwable $e) {
+            Log::error('Forgot password error: ' . $e->getMessage());
 
-        return response()->json([
-            'icon' => 'error',
-            'title' => 'Unable to send password reset link.',
-        ], 500);
+            return response()->json([
+                'icon' => 'error',
+                'title' => 'فشل إرسال البريد الإلكتروني. يرجى التأكد من إعدادات مزود البريد (SMTP).',
+                'message' => config('app.debug') ? $e->getMessage() : 'Email service unavailable.',
+            ], 500);
+        }
     }
 
     #[OA\Post(
