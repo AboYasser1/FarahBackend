@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\CategoryController;
 use App\Http\Controllers\Api\CityController;
+use App\Http\Controllers\Api\FavoriteController;
 use App\Http\Controllers\Api\HomeController;
 use App\Http\Controllers\Api\LocationController;
 use App\Http\Controllers\Api\ServiceController;
@@ -21,8 +22,9 @@ Route::get('/cities', [CityController::class, 'index']);
 Route::get('/home', [HomeController::class, 'index']);
 Route::get('/categories', [CategoryController::class, 'index']);
 
-// Services
+// Services (List, Category Services, Search, Filters, Show)
 Route::get('/services', [ServiceController::class, 'index']);
+Route::get('/categories/{id}/services', [ServiceController::class, 'index']);
 Route::get('/services/{id}', [ServiceController::class, 'show']);
 
 /*
@@ -68,4 +70,9 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Locations (CRUD)
     Route::apiResource('locations', LocationController::class);
+
+    // Favorites (List & Toggle)
+    Route::get('/favorites', [FavoriteController::class, 'index']);
+    Route::post('/favorites/toggle/{service_id}', [FavoriteController::class, 'toggle']);
+    Route::post('/services/{id}/favorite', [FavoriteController::class, 'toggle']);
 });

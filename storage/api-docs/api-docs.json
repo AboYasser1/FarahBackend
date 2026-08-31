@@ -1112,13 +1112,194 @@
                 }
             }
         },
+        "/api/favorites": {
+            "get": {
+                "tags": [
+                    "Favorites"
+                ],
+                "summary": "جلب قائمة الخدمات المفضلة للمستخدم",
+                "description": "يسترجع قائمة بجميع الخدمات التي قام المستخدم المسجل بإضافتها إلى المفضلة.",
+                "operationId": "bc433e786ab5a0bec81c53c578e0b6aa",
+                "responses": {
+                    "200": {
+                        "description": "تم جلب المفضلة بنجاح",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "integer",
+                                                        "example": 1
+                                                    },
+                                                    "service_id": {
+                                                        "type": "integer",
+                                                        "example": 5
+                                                    },
+                                                    "title": {
+                                                        "type": "string",
+                                                        "example": "صالة أورنا"
+                                                    },
+                                                    "price": {
+                                                        "type": "number",
+                                                        "format": "float",
+                                                        "example": 1400
+                                                    },
+                                                    "currency": {
+                                                        "type": "string",
+                                                        "example": "ILS"
+                                                    },
+                                                    "image": {
+                                                        "type": "string",
+                                                        "example": "services/hall_orna.jpg",
+                                                        "nullable": true
+                                                    },
+                                                    "rating_avg": {
+                                                        "type": "number",
+                                                        "format": "float",
+                                                        "example": 4.8
+                                                    },
+                                                    "reviews_count": {
+                                                        "type": "integer",
+                                                        "example": 19
+                                                    },
+                                                    "location": {
+                                                        "type": "string",
+                                                        "example": "غزة - الرمال - شمال مطعم التايلندي"
+                                                    },
+                                                    "city": {
+                                                        "type": "string",
+                                                        "example": "غزة"
+                                                    },
+                                                    "is_favorited": {
+                                                        "type": "boolean",
+                                                        "example": true
+                                                    },
+                                                    "category": {
+                                                        "properties": {
+                                                            "id": {
+                                                                "type": "integer",
+                                                                "example": 1
+                                                            },
+                                                            "name": {
+                                                                "type": "string",
+                                                                "example": "صالات"
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    },
+                                                    "provider": {
+                                                        "properties": {
+                                                            "id": {
+                                                                "type": "integer",
+                                                                "example": 3
+                                                            },
+                                                            "name": {
+                                                                "type": "string",
+                                                                "example": "صالة أورنا"
+                                                            },
+                                                            "avatar": {
+                                                                "type": "string",
+                                                                "example": "providers/orna.jpg",
+                                                                "nullable": true
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "غير مصرح (يرجى تسجيل الدخول)"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/favorites/toggle/{service_id}": {
+            "post": {
+                "tags": [
+                    "Favorites"
+                ],
+                "summary": "إضافة أو إزالة خدمة من المفضلة (Toggle)",
+                "description": "يقوم بالتبديل بين إضافة الخدمة إلى المفضلة أو حذفها في حال كانت موجودة مسبقاً.",
+                "operationId": "ec6c68a63bebfe2743dd6acf0bc0b770",
+                "parameters": [
+                    {
+                        "name": "service_id",
+                        "in": "path",
+                        "description": "معرّف الخدمة المطلوب إضافتها أو إزالتها",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "تم تحديث حالة المفضلة بنجاح",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "is_favorited": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "تمت إضافة الخدمة إلى المفضلة بنجاح"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "الخدمة غير موجودة"
+                    },
+                    "401": {
+                        "description": "غير مصرح (يرجى تسجيل الدخول)"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/api/home": {
             "get": {
                 "tags": [
                     "Home"
                 ],
-                "summary": "جلب بيانات الصفحة الرئيسية (المزودين المميزين، التصنيفات، الخدمات)",
-                "description": "يسترجع المكونات الأساسية للواجهة الرئيسية متضمنة المزودين الموصى بهم، الفئات، وأحدث الخدمات النشطة.",
+                "summary": "جلب بيانات الصفحة الرئيسية الكاملة حسب التصميم",
+                "description": "يسترجع بيانات الصفحة الرئيسية بما يشمل: معلومات الهيدر والمستخدم، قائمة الخدمات والتصنيفات، سلايدر العروض المميزة، المزودين المقترحين، الباقات المميزة، والخدمات الأكثر طلباً.",
                 "operationId": "d65ef76cbb32ae304c5a24c525b95adb",
                 "responses": {
                     "200": {
@@ -1127,48 +1308,44 @@
                             "application/json": {
                                 "schema": {
                                     "properties": {
-                                        "featured_providers": {
-                                            "type": "array",
-                                            "items": {
-                                                "properties": {
-                                                    "id": {
-                                                        "type": "integer",
-                                                        "example": 1
-                                                    },
-                                                    "user_id": {
-                                                        "type": "integer",
-                                                        "example": 4
-                                                    },
-                                                    "bio": {
-                                                        "type": "string",
-                                                        "example": "مختص بالتصوير والتنسيق"
-                                                    },
-                                                    "is_featured": {
-                                                        "type": "boolean",
-                                                        "example": true
-                                                    },
-                                                    "user": {
-                                                        "properties": {
-                                                            "id": {
-                                                                "type": "integer",
-                                                                "example": 4
-                                                            },
-                                                            "name": {
-                                                                "type": "string",
-                                                                "example": "أحمد مصور"
-                                                            },
-                                                            "email": {
-                                                                "type": "string",
-                                                                "example": "ahmed@example.com"
-                                                            }
-                                                        },
-                                                        "type": "object"
-                                                    }
+                                        "user": {
+                                            "description": "معلومات المستخدم المسجل وموقعه (null في حال كان الزائر غير مسجل)",
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": 1
                                                 },
-                                                "type": "object"
-                                            }
+                                                "name": {
+                                                    "type": "string",
+                                                    "example": "مالك"
+                                                },
+                                                "email": {
+                                                    "type": "string",
+                                                    "example": "malik@example.com"
+                                                },
+                                                "avatar": {
+                                                    "type": "string",
+                                                    "example": "avatars/malik.jpg",
+                                                    "nullable": true
+                                                },
+                                                "location": {
+                                                    "type": "string",
+                                                    "example": "غزة، الوحدة"
+                                                },
+                                                "city": {
+                                                    "type": "string",
+                                                    "example": "غزة"
+                                                },
+                                                "unread_notifications_count": {
+                                                    "type": "integer",
+                                                    "example": 3
+                                                }
+                                            },
+                                            "type": "object",
+                                            "nullable": true
                                         },
                                         "categories": {
+                                            "description": "قائمة التصنيفات والأقسام (الخدمات)",
                                             "type": "array",
                                             "items": {
                                                 "properties": {
@@ -1178,7 +1355,7 @@
                                                     },
                                                     "name": {
                                                         "type": "string",
-                                                        "example": "صالات أفراح"
+                                                        "example": "صالات"
                                                     },
                                                     "slug": {
                                                         "type": "string",
@@ -1197,7 +1374,8 @@
                                                 "type": "object"
                                             }
                                         },
-                                        "services": {
+                                        "banners": {
+                                            "description": "سلايدر العروض والخدمات المميزة في أعلى الشاشة",
                                             "type": "array",
                                             "items": {
                                                 "properties": {
@@ -1205,26 +1383,245 @@
                                                         "type": "integer",
                                                         "example": 1
                                                     },
-                                                    "category_id": {
-                                                        "type": "integer",
-                                                        "example": 1
-                                                    },
-                                                    "provider_id": {
+                                                    "service_id": {
                                                         "type": "integer",
                                                         "example": 1
                                                     },
                                                     "title": {
                                                         "type": "string",
-                                                        "example": "تنسيق قاعات ومهرجانات"
+                                                        "example": "صالة اورنا"
+                                                    },
+                                                    "badge": {
+                                                        "type": "string",
+                                                        "example": "عرض لفترة محدودة"
                                                     },
                                                     "price": {
                                                         "type": "number",
                                                         "format": "float",
-                                                        "example": 150
+                                                        "example": 1400
                                                     },
-                                                    "status": {
+                                                    "currency": {
                                                         "type": "string",
-                                                        "example": "active"
+                                                        "example": "ILS"
+                                                    },
+                                                    "image": {
+                                                        "type": "string",
+                                                        "example": "services/hall_orna.jpg",
+                                                        "nullable": true
+                                                    },
+                                                    "features": {
+                                                        "type": "array",
+                                                        "items": {
+                                                            "type": "string",
+                                                            "example": "دي جي متكامل"
+                                                        }
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        },
+                                        "suggested_providers": {
+                                            "description": "مزودين مقترحين للمستخدم",
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "integer",
+                                                        "example": 1
+                                                    },
+                                                    "user_id": {
+                                                        "type": "integer",
+                                                        "example": 4
+                                                    },
+                                                    "name": {
+                                                        "type": "string",
+                                                        "example": "إيمان فؤاد"
+                                                    },
+                                                    "business_name": {
+                                                        "type": "string",
+                                                        "example": "إيمان فؤاد"
+                                                    },
+                                                    "avatar": {
+                                                        "type": "string",
+                                                        "example": "providers/eman.jpg",
+                                                        "nullable": true
+                                                    },
+                                                    "specialty": {
+                                                        "type": "string",
+                                                        "example": "أضواء"
+                                                    },
+                                                    "category_name": {
+                                                        "type": "string",
+                                                        "example": "أضواء"
+                                                    },
+                                                    "rating": {
+                                                        "type": "number",
+                                                        "format": "float",
+                                                        "example": 4.9
+                                                    },
+                                                    "city": {
+                                                        "type": "string",
+                                                        "example": "غزة"
+                                                    },
+                                                    "is_featured": {
+                                                        "type": "boolean",
+                                                        "example": true
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        },
+                                        "featured_packages": {
+                                            "description": "باقات مميزة وعروض ذات نسب خصم",
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "integer",
+                                                        "example": 1
+                                                    },
+                                                    "title": {
+                                                        "type": "string",
+                                                        "example": "باقة الورد والتنسيق الملكي"
+                                                    },
+                                                    "image": {
+                                                        "type": "string",
+                                                        "example": "services/package1.jpg",
+                                                        "nullable": true
+                                                    },
+                                                    "discount_badge": {
+                                                        "type": "string",
+                                                        "example": "خصم 15%"
+                                                    },
+                                                    "discount_percentage": {
+                                                        "type": "integer",
+                                                        "example": 15
+                                                    },
+                                                    "price": {
+                                                        "type": "number",
+                                                        "format": "float",
+                                                        "example": 350
+                                                    },
+                                                    "original_price": {
+                                                        "type": "number",
+                                                        "format": "float",
+                                                        "example": 411.76
+                                                    },
+                                                    "currency": {
+                                                        "type": "string",
+                                                        "example": "ILS"
+                                                    },
+                                                    "rating_avg": {
+                                                        "type": "number",
+                                                        "format": "float",
+                                                        "example": 4.9
+                                                    },
+                                                    "reviews_count": {
+                                                        "type": "integer",
+                                                        "example": 22
+                                                    },
+                                                    "provider": {
+                                                        "properties": {
+                                                            "id": {
+                                                                "type": "integer",
+                                                                "example": 2
+                                                            },
+                                                            "name": {
+                                                                "type": "string",
+                                                                "example": "لافندر ستور"
+                                                            },
+                                                            "avatar": {
+                                                                "type": "string",
+                                                                "example": "providers/lavender.jpg",
+                                                                "nullable": true
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    },
+                                                    "category": {
+                                                        "properties": {
+                                                            "id": {
+                                                                "type": "integer",
+                                                                "example": 2
+                                                            },
+                                                            "name": {
+                                                                "type": "string",
+                                                                "example": "تنسيق ورد"
+                                                            }
+                                                        },
+                                                        "type": "object",
+                                                        "nullable": true
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        },
+                                        "most_popular": {
+                                            "description": "الخدمات الأكثر طلباً وتقييماً",
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "integer",
+                                                        "example": 1
+                                                    },
+                                                    "title": {
+                                                        "type": "string",
+                                                        "example": "صالة هابي نايت"
+                                                    },
+                                                    "description": {
+                                                        "type": "string",
+                                                        "example": "صالة مجهزة بأحدث الديكورات",
+                                                        "nullable": true
+                                                    },
+                                                    "price": {
+                                                        "type": "number",
+                                                        "format": "float",
+                                                        "example": 1800
+                                                    },
+                                                    "currency": {
+                                                        "type": "string",
+                                                        "example": "ILS"
+                                                    },
+                                                    "image": {
+                                                        "type": "string",
+                                                        "example": "services/happy_night.jpg",
+                                                        "nullable": true
+                                                    },
+                                                    "rating_avg": {
+                                                        "type": "number",
+                                                        "format": "float",
+                                                        "example": 5
+                                                    },
+                                                    "reviews_count": {
+                                                        "type": "integer",
+                                                        "example": 45
+                                                    },
+                                                    "location": {
+                                                        "type": "string",
+                                                        "example": "غزة - شارع الجلاء مقابل منتزه البلدية"
+                                                    },
+                                                    "city": {
+                                                        "type": "string",
+                                                        "example": "غزة"
+                                                    },
+                                                    "provider": {
+                                                        "properties": {
+                                                            "id": {
+                                                                "type": "integer",
+                                                                "example": 3
+                                                            },
+                                                            "name": {
+                                                                "type": "string",
+                                                                "example": "صالة هابي نايت"
+                                                            },
+                                                            "avatar": {
+                                                                "type": "string",
+                                                                "example": "providers/hall.jpg",
+                                                                "nullable": true
+                                                            }
+                                                        },
+                                                        "type": "object"
                                                     },
                                                     "category": {
                                                         "properties": {
@@ -1234,41 +1631,27 @@
                                                             },
                                                             "name": {
                                                                 "type": "string",
-                                                                "example": "صالات أفراح"
+                                                                "example": "صالات"
                                                             }
                                                         },
-                                                        "type": "object"
-                                                    },
-                                                    "provider": {
-                                                        "properties": {
-                                                            "id": {
-                                                                "type": "integer",
-                                                                "example": 1
-                                                            },
-                                                            "bio": {
-                                                                "type": "string",
-                                                                "example": "مختص بالتصوير والتنسيق"
-                                                            }
-                                                        },
-                                                        "type": "object"
-                                                    },
-                                                    "images": {
-                                                        "type": "array",
-                                                        "items": {
-                                                            "properties": {
-                                                                "id": {
-                                                                    "type": "integer",
-                                                                    "example": 1
-                                                                },
-                                                                "image_path": {
-                                                                    "type": "string",
-                                                                    "example": "services/service1.jpg"
-                                                                }
-                                                            },
-                                                            "type": "object"
-                                                        }
+                                                        "type": "object",
+                                                        "nullable": true
                                                     }
                                                 },
+                                                "type": "object"
+                                            }
+                                        },
+                                        "featured_providers": {
+                                            "description": "مرادف متوافق عكسياً لـ suggested_providers",
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object"
+                                            }
+                                        },
+                                        "services": {
+                                            "description": "مرادف متوافق عكسياً لـ most_popular",
+                                            "type": "array",
+                                            "items": {
                                                 "type": "object"
                                             }
                                         }
@@ -1538,184 +1921,268 @@
                 "tags": [
                     "Services"
                 ],
-                "summary": "استعراض قائمة الخدمات مع الفلترة والترقيم",
+                "summary": "استعراض والبحث في الخدمات والفلترة حسب التصنيف والفرز",
+                "description": "يسترجع قائمة الخدمات المطابقة للتصميم (كروت الصالات والخدمات) مع دعم البحث الفوري، الفلترة حسب التصنيف والمدينة، والفرز بالأقل سعراً أو الأعلى تقييماً أو الأقرب لموقعك، مع حالة المفضلة للمستخدم المسجل.",
                 "operationId": "97de511018def32ca0ccbc800756c538",
                 "parameters": [
                     {
                         "name": "category_id",
                         "in": "query",
-                        "description": "معرّف التصنيف للفلترة",
+                        "description": "معرّف التصنيف (مثل صالات: 1)",
                         "required": false,
                         "schema": {
                             "type": "integer",
                             "example": 1
+                        }
+                    },
+                    {
+                        "name": "category_slug",
+                        "in": "query",
+                        "description": "الاسم اللطيف للتصنيف (مثل: wedding-halls)",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "wedding-halls"
                         }
                     },
                     {
                         "name": "search",
                         "in": "query",
-                        "description": "كلمة البحث في عنوان أو وصف الخدمة",
+                        "description": "كلمة البحث في عنوان أو وصف الخدمة (ابحث ضمن الصالات...)",
                         "required": false,
                         "schema": {
                             "type": "string",
-                            "example": "تصوير"
+                            "example": "اورنا"
                         }
                     },
                     {
-                        "name": "page",
+                        "name": "sort_by",
                         "in": "query",
-                        "description": "رقم الصفحة للترقيم (Pagination)",
+                        "description": "طريقة الفرز: all (الكل)، price_low (الأقل سعراً)، price_high (الأعلى سعراً)، rating (الأعلى تقييماً)، nearest (الأقرب لموقعك)",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "default": "all",
+                            "enum": [
+                                "all",
+                                "price_low",
+                                "price_high",
+                                "rating",
+                                "nearest"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "city_id",
+                        "in": "query",
+                        "description": "فلترة حسب المدينة",
                         "required": false,
                         "schema": {
                             "type": "integer",
                             "example": 1
                         }
+                    },
+                    {
+                        "name": "latitude",
+                        "in": "query",
+                        "description": "خط العرض الحالي لحساب الأقرب لموقعك",
+                        "required": false,
+                        "schema": {
+                            "type": "number",
+                            "format": "float",
+                            "example": 31.5
+                        }
+                    },
+                    {
+                        "name": "longitude",
+                        "in": "query",
+                        "description": "خط الطول الحالي لحساب الأقرب لموقعك",
+                        "required": false,
+                        "schema": {
+                            "type": "number",
+                            "format": "float",
+                            "example": 34.4667
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "عدد العناصر في الصفحة الواحدة",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 10
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "رقم الصفحة (Pagination)",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 1
+                        }
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "تم جلب الخدمات بنجاح",
+                        "description": "تم جلب الخدمات بنجاح وتوافقها التام مع كروت الواجهة",
                         "content": {
                             "application/json": {
                                 "schema": {
                                     "properties": {
-                                        "data": {
+                                        "category": {
+                                            "description": "بيانات التصنيف المختار (لعنوان الشاشة)",
                                             "properties": {
-                                                "current_page": {
+                                                "id": {
                                                     "type": "integer",
                                                     "example": 1
                                                 },
-                                                "data": {
-                                                    "type": "array",
-                                                    "items": {
+                                                "name": {
+                                                    "type": "string",
+                                                    "example": "صالات"
+                                                },
+                                                "slug": {
+                                                    "type": "string",
+                                                    "example": "wedding-halls"
+                                                },
+                                                "image": {
+                                                    "type": "string",
+                                                    "example": "categories/hall.jpg",
+                                                    "nullable": true
+                                                }
+                                            },
+                                            "type": "object",
+                                            "nullable": true
+                                        },
+                                        "available_sorts": {
+                                            "description": "خيارات الفرز المتاحة في الواجهة",
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "key": {
+                                                        "type": "string",
+                                                        "example": "all"
+                                                    },
+                                                    "label": {
+                                                        "type": "string",
+                                                        "example": "الكل"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        },
+                                        "active_sort": {
+                                            "type": "string",
+                                            "example": "all"
+                                        },
+                                        "data": {
+                                            "description": "قائمة كروت الخدمات المطابقة للتصميم",
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "integer",
+                                                        "example": 1
+                                                    },
+                                                    "title": {
+                                                        "type": "string",
+                                                        "example": "صالة أورنا"
+                                                    },
+                                                    "description": {
+                                                        "type": "string",
+                                                        "example": "صالة أفراح مجهزة بأحدث الديكورات",
+                                                        "nullable": true
+                                                    },
+                                                    "price": {
+                                                        "type": "number",
+                                                        "format": "float",
+                                                        "example": 1400
+                                                    },
+                                                    "currency": {
+                                                        "type": "string",
+                                                        "example": "ILS"
+                                                    },
+                                                    "image": {
+                                                        "type": "string",
+                                                        "example": "services/hall_orna.jpg",
+                                                        "nullable": true
+                                                    },
+                                                    "images": {
+                                                        "type": "array",
+                                                        "items": {
+                                                            "type": "string",
+                                                            "example": "services/hall_orna.jpg"
+                                                        }
+                                                    },
+                                                    "rating_avg": {
+                                                        "type": "number",
+                                                        "format": "float",
+                                                        "example": 4.8
+                                                    },
+                                                    "reviews_count": {
+                                                        "type": "integer",
+                                                        "example": 24
+                                                    },
+                                                    "location": {
+                                                        "type": "string",
+                                                        "example": "غزة - الرمال - شمال مطعم التايلندي، عمارة حرز الله"
+                                                    },
+                                                    "city": {
+                                                        "type": "string",
+                                                        "example": "غزة"
+                                                    },
+                                                    "is_favorited": {
+                                                        "type": "boolean",
+                                                        "example": false
+                                                    },
+                                                    "button_text": {
+                                                        "type": "string",
+                                                        "example": "تفاصيل الصالة"
+                                                    },
+                                                    "provider": {
+                                                        "properties": {
+                                                            "id": {
+                                                                "type": "integer",
+                                                                "example": 4
+                                                            },
+                                                            "name": {
+                                                                "type": "string",
+                                                                "example": "إدارة صالة أورنا"
+                                                            },
+                                                            "avatar": {
+                                                                "type": "string",
+                                                                "example": "providers/orna.jpg",
+                                                                "nullable": true
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    },
+                                                    "category": {
                                                         "properties": {
                                                             "id": {
                                                                 "type": "integer",
                                                                 "example": 1
                                                             },
-                                                            "category_id": {
-                                                                "type": "integer",
-                                                                "example": 2
-                                                            },
-                                                            "provider_id": {
-                                                                "type": "integer",
-                                                                "example": 4
-                                                            },
-                                                            "title": {
+                                                            "name": {
                                                                 "type": "string",
-                                                                "example": "خدمة تصوير وتوثيق الحفلات"
+                                                                "example": "صالات"
                                                             },
-                                                            "description": {
+                                                            "slug": {
                                                                 "type": "string",
-                                                                "example": "تغطية شاملة وفيديو بدقة عالية"
-                                                            },
-                                                            "price": {
-                                                                "type": "number",
-                                                                "format": "float",
-                                                                "example": 250
-                                                            },
-                                                            "status": {
-                                                                "type": "string",
-                                                                "example": "active"
-                                                            },
-                                                            "created_at": {
-                                                                "type": "string",
-                                                                "format": "date-time",
-                                                                "example": "2026-08-26T12:00:00.000000Z"
-                                                            },
-                                                            "category": {
-                                                                "properties": {
-                                                                    "id": {
-                                                                        "type": "integer",
-                                                                        "example": 2
-                                                                    },
-                                                                    "name": {
-                                                                        "type": "string",
-                                                                        "example": "تصوير وفيديو"
-                                                                    }
-                                                                },
-                                                                "type": "object"
-                                                            },
-                                                            "provider": {
-                                                                "properties": {
-                                                                    "id": {
-                                                                        "type": "integer",
-                                                                        "example": 4
-                                                                    },
-                                                                    "user": {
-                                                                        "properties": {
-                                                                            "id": {
-                                                                                "type": "integer",
-                                                                                "example": 10
-                                                                            },
-                                                                            "name": {
-                                                                                "type": "string",
-                                                                                "example": "أحمد مصور"
-                                                                            }
-                                                                        },
-                                                                        "type": "object"
-                                                                    }
-                                                                },
-                                                                "type": "object"
-                                                            },
-                                                            "images": {
-                                                                "type": "array",
-                                                                "items": {
-                                                                    "properties": {
-                                                                        "id": {
-                                                                            "type": "integer",
-                                                                            "example": 1
-                                                                        },
-                                                                        "image_path": {
-                                                                            "type": "string",
-                                                                            "example": "services/image1.jpg"
-                                                                        }
-                                                                    },
-                                                                    "type": "object"
-                                                                }
-                                                            },
-                                                            "reviews": {
-                                                                "type": "array",
-                                                                "items": {
-                                                                    "properties": {
-                                                                        "id": {
-                                                                            "type": "integer",
-                                                                            "example": 1
-                                                                        },
-                                                                        "rating": {
-                                                                            "type": "integer",
-                                                                            "example": 5
-                                                                        },
-                                                                        "comment": {
-                                                                            "type": "string",
-                                                                            "example": "خدمة ممتازة جداً"
-                                                                        },
-                                                                        "user": {
-                                                                            "properties": {
-                                                                                "id": {
-                                                                                    "type": "integer",
-                                                                                    "example": 8
-                                                                                },
-                                                                                "name": {
-                                                                                    "type": "string",
-                                                                                    "example": "محمد علي"
-                                                                                }
-                                                                            },
-                                                                            "type": "object"
-                                                                        }
-                                                                    },
-                                                                    "type": "object"
-                                                                }
+                                                                "example": "wedding-halls"
                                                             }
                                                         },
                                                         "type": "object"
                                                     }
                                                 },
-                                                "first_page_url": {
-                                                    "type": "string",
-                                                    "example": "http://example.com/api/services?page=1"
-                                                },
-                                                "from": {
+                                                "type": "object"
+                                            }
+                                        },
+                                        "pagination": {
+                                            "properties": {
+                                                "current_page": {
                                                     "type": "integer",
                                                     "example": 1
                                                 },
@@ -1723,34 +2190,17 @@
                                                     "type": "integer",
                                                     "example": 3
                                                 },
-                                                "last_page_url": {
-                                                    "type": "string",
-                                                    "example": "http://example.com/api/services?page=3"
-                                                },
-                                                "next_page_url": {
-                                                    "type": "string",
-                                                    "example": "http://example.com/api/services?page=2"
-                                                },
-                                                "path": {
-                                                    "type": "string",
-                                                    "example": "http://example.com/api/services"
-                                                },
                                                 "per_page": {
                                                     "type": "integer",
-                                                    "example": 12
-                                                },
-                                                "prev_page_url": {
-                                                    "type": "string",
-                                                    "example": null,
-                                                    "nullable": true
-                                                },
-                                                "to": {
-                                                    "type": "integer",
-                                                    "example": 12
+                                                    "example": 10
                                                 },
                                                 "total": {
                                                     "type": "integer",
-                                                    "example": 30
+                                                    "example": 25
+                                                },
+                                                "has_more": {
+                                                    "type": "boolean",
+                                                    "example": true
                                                 }
                                             },
                                             "type": "object"
@@ -1769,7 +2219,8 @@
                 "tags": [
                     "Services"
                 ],
-                "summary": "عرض تفاصيل خدمة محددة",
+                "summary": "عرض تفاصيل خدمة أو صالة محددة",
+                "description": "يسترجع كافة تفاصيل الخدمة بما يشمل معرض الصور، التقييمات، معلومات المزود، والموقع.",
                 "operationId": "dce5b306a141bdec91eff8a15534d7d7",
                 "parameters": [
                     {
@@ -1796,45 +2247,69 @@
                                                     "type": "integer",
                                                     "example": 1
                                                 },
-                                                "category_id": {
-                                                    "type": "integer",
-                                                    "example": 2
-                                                },
-                                                "provider_id": {
-                                                    "type": "integer",
-                                                    "example": 4
-                                                },
                                                 "title": {
                                                     "type": "string",
-                                                    "example": "خدمة تصوير وتوثيق الحفلات"
+                                                    "example": "صالة أورنا"
                                                 },
                                                 "description": {
                                                     "type": "string",
-                                                    "example": "تغطية شاملة وفيديو بدقة عالية"
+                                                    "example": "صالة مجهزة بأحدث الديكورات ونظام إضاءة وصوت مميز"
                                                 },
                                                 "price": {
                                                     "type": "number",
                                                     "format": "float",
-                                                    "example": 250
+                                                    "example": 1400
                                                 },
-                                                "status": {
+                                                "currency": {
                                                     "type": "string",
-                                                    "example": "active"
+                                                    "example": "ILS"
                                                 },
-                                                "created_at": {
+                                                "image": {
                                                     "type": "string",
-                                                    "format": "date-time",
-                                                    "example": "2026-08-26T12:00:00.000000Z"
+                                                    "example": "services/hall_orna.jpg",
+                                                    "nullable": true
+                                                },
+                                                "images": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string",
+                                                        "example": "services/hall_orna.jpg"
+                                                    }
+                                                },
+                                                "rating_avg": {
+                                                    "type": "number",
+                                                    "format": "float",
+                                                    "example": 4.8
+                                                },
+                                                "reviews_count": {
+                                                    "type": "integer",
+                                                    "example": 24
+                                                },
+                                                "location": {
+                                                    "type": "string",
+                                                    "example": "غزة - الرمال - شمال مطعم التايلندي، عمارة حرز الله"
+                                                },
+                                                "city": {
+                                                    "type": "string",
+                                                    "example": "غزة"
+                                                },
+                                                "is_favorited": {
+                                                    "type": "boolean",
+                                                    "example": false
                                                 },
                                                 "category": {
                                                     "properties": {
                                                         "id": {
                                                             "type": "integer",
-                                                            "example": 2
+                                                            "example": 1
                                                         },
                                                         "name": {
                                                             "type": "string",
-                                                            "example": "تصوير وفيديو"
+                                                            "example": "صالات"
+                                                        },
+                                                        "slug": {
+                                                            "type": "string",
+                                                            "example": "wedding-halls"
                                                         }
                                                     },
                                                     "type": "object"
@@ -1847,30 +2322,25 @@
                                                         },
                                                         "name": {
                                                             "type": "string",
-                                                            "example": "أحمد مصور"
+                                                            "example": "صالة أورنا"
                                                         },
-                                                        "email": {
+                                                        "avatar": {
                                                             "type": "string",
-                                                            "example": "ahmed@example.com"
+                                                            "example": "providers/orna.jpg",
+                                                            "nullable": true
+                                                        },
+                                                        "phone": {
+                                                            "type": "string",
+                                                            "example": "0599000000",
+                                                            "nullable": true
+                                                        },
+                                                        "bio": {
+                                                            "type": "string",
+                                                            "example": "أفضل صالات الأفراح في غزة",
+                                                            "nullable": true
                                                         }
                                                     },
                                                     "type": "object"
-                                                },
-                                                "images": {
-                                                    "type": "array",
-                                                    "items": {
-                                                        "properties": {
-                                                            "id": {
-                                                                "type": "integer",
-                                                                "example": 1
-                                                            },
-                                                            "image_path": {
-                                                                "type": "string",
-                                                                "example": "services/image1.jpg"
-                                                            }
-                                                        },
-                                                        "type": "object"
-                                                    }
                                                 },
                                                 "reviews": {
                                                     "type": "array",
@@ -1886,20 +2356,15 @@
                                                             },
                                                             "comment": {
                                                                 "type": "string",
-                                                                "example": "خدمة ممتازة جداً"
+                                                                "example": "مكان رائع وخدمة ممتازة جداً"
                                                             },
-                                                            "user": {
-                                                                "properties": {
-                                                                    "id": {
-                                                                        "type": "integer",
-                                                                        "example": 8
-                                                                    },
-                                                                    "name": {
-                                                                        "type": "string",
-                                                                        "example": "محمد علي"
-                                                                    }
-                                                                },
-                                                                "type": "object"
+                                                            "user_name": {
+                                                                "type": "string",
+                                                                "example": "مالك"
+                                                            },
+                                                            "created_at": {
+                                                                "type": "string",
+                                                                "example": "2026-08-20"
                                                             }
                                                         },
                                                         "type": "object"
@@ -1945,6 +2410,10 @@
         {
             "name": "Cities",
             "description": "المدن والمناطق"
+        },
+        {
+            "name": "Favorites",
+            "description": "إدارة المفضلة وقائمة الخدمات المفضلة للمستخدم"
         },
         {
             "name": "Home",

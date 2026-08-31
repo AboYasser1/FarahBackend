@@ -192,11 +192,14 @@ class AuthController extends Controller
             'email_verified_at' => null,
         ]);
 
-        try {
-            $user->sendEmailVerificationNotification();
-        } catch (\Throwable $e) {
-            Log::warning('Email verification notification could not be sent: ' . $e->getMessage());
-        }
+        // إرسال بريد التحقق بعد إرسال الاستجابة للعميل مباشرة لتجنب أي Timeout في تطبيق الموبايل
+        dispatch(function () use ($user) {
+            try {
+                $user->sendEmailVerificationNotification();
+            } catch (\Throwable $e) {
+                Log::warning('Email verification notification could not be sent: ' . $e->getMessage());
+            }
+        })->afterResponse();
 
         $token = $user->createToken('api_Token')->plainTextToken;
 
@@ -363,11 +366,13 @@ class AuthController extends Controller
             ], 400);
         }
 
-        try {
-            $user->sendEmailVerificationNotification();
-        } catch (\Throwable $e) {
-            Log::warning('Resend email verification notification failed: ' . $e->getMessage());
-        }
+        dispatch(function () use ($user) {
+            try {
+                $user->sendEmailVerificationNotification();
+            } catch (\Throwable $e) {
+                Log::warning('Resend email verification notification failed: ' . $e->getMessage());
+            }
+        })->afterResponse();
 
         return response()->json([
             'icon' => 'success',
