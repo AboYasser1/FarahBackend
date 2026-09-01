@@ -76,3 +76,17 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/favorites/toggle/{service_id}', [FavoriteController::class, 'toggle']);
     Route::post('/services/{id}/favorite', [FavoriteController::class, 'toggle']);
 });
+
+Route::get('/debug-mail-test', function () {
+    try {
+        \Mail::raw('Test email from Farah backend', function ($msg) {
+            $msg->to('my9137254@gmail.com')->subject('SMTP Test');
+        });
+        return response()->json(['status' => 'sent ok']);
+    } catch (\Throwable $e) {
+        return response()->json([
+            'status' => 'failed',
+            'error' => $e->getMessage(),
+        ], 500);
+    }
+});
