@@ -192,7 +192,6 @@ class AuthController extends Controller
             'email_verified_at' => null,
         ]);
 
-        // إرسال بريد التحقق بعد إرسال الاستجابة للعميل مباشرة لتجنب أي Timeout في تطبيق الموبايل
         dispatch(function () use ($user) {
             try {
                 $user->sendEmailVerificationNotification();
@@ -236,7 +235,9 @@ class AuthController extends Controller
     {
         $user = User::findOrFail($id);
 
-        if (! hash_equals((string) $hash, sha1($user->getEmailForVerification()))) {
+        $expectedHash = sha1($user->getEmailForVerification());
+
+        if (! hash_equals((string) $hash, $expectedHash)) {
             return response()->json([
                 'icon' => 'error',
                 'title' => 'Invalid verification link.',
